@@ -12,6 +12,7 @@ import { useHeroStore } from '@/store/heroStore';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 import DebuggingDescent from '@/components/sections/DebuggingDescent';
 import BlueprintAssembly from '@/components/sections/BlueprintAssembly';
+import RetroGridBackground from '@/components/canvas/RetroGridBackground';
 // import Preloader from '@/components/layout/Preloader';
 
 /* ── Dynamic imports ─────────────────────────────────────────────── */
@@ -58,6 +59,7 @@ export default function HomePage() {
 
       {/* ── Narrative Sections ── */}
       <main className="relative">
+        <RetroGridBackground />
 
         {/*
           ┌─────────────────────────────────┐

@@ -6,7 +6,7 @@ import { HoloButton } from "@/components/SciFiUI";
 
 export default function FinalCallToAction() {
     return (
-        <section className="relative h-screen w-full bg-slate-950 flex flex-col items-center justify-center overflow-hidden">
+        <section className="relative h-screen w-full bg-transparent flex flex-col items-center justify-center overflow-hidden">
             
             {/* Background Details */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#000000_90%)] pointer-events-none" />

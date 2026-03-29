@@ -68,8 +68,8 @@ export default function BlueprintAssembly() {
     }, []);
 
     return (
-        <div ref={wrapperRef} className="relative w-full bg-slate-950 overflow-hidden">
-            <section ref={containerRef} className="relative h-screen w-full flex flex-col md:flex-row bg-slate-950">
+        <div ref={wrapperRef} className="relative w-full bg-transparent overflow-hidden">
+            <section ref={containerRef} className="relative h-screen w-full flex flex-col md:flex-row bg-transparent">
 
                 {/* --- 1. BACKGROUND LAYER --- */}
                 <div className="absolute inset-0 pointer-events-none opacity-[0.10]"
@@ -135,7 +135,7 @@ export default function BlueprintAssembly() {
                         {MODULES.map((mod, i) => (
                             <div key={mod.id} 
                                  ref={el => modulesRef.current[i] = el}
-                                 className={`absolute z-10 w-24 h-24 bg-slate-950 border border-[#ea580c]/30 rounded-xl flex flex-col items-center justify-center p-2 shadow-[0_0_15px_rgba(249,115,22,0.1)] overflow-hidden will-change-transform ${mod.posClasses}`}
+                                 className={`absolute z-10 w-24 h-24 bg-transparent border border-[#ea580c]/30 rounded-xl flex flex-col items-center justify-center p-2 shadow-[0_0_15px_rgba(249,115,22,0.1)] overflow-hidden will-change-transform ${mod.posClasses}`}
                             >
                                 <div className="text-orange-400 mb-1 opacity-80">{mod.icon}</div>
                                 <span className="font-mono text-orange-200 text-[10px] font-bold text-center leading-tight tracking-wider">{mod.label}</span>

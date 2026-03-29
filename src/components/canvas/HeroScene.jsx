@@ -22,11 +22,11 @@ export default function HeroScene({ scrollProgress }) {
       dpr={isMobile ? 1 : [1, 1.5]}
       gl={{
         antialias: !isMobile,
-        alpha: false,
+        alpha: true,
         powerPreference: 'high-performance',
       }}
       // Set to absolute black to maximize the neon contrast
-      style={{ background: '#000000' }}
+      style={{ background: "transparent" }}
     >
       {/* ── Ambient / Key Lights ── */}
       {/* Deep, dark violet ambient baseline */}

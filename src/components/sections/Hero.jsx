@@ -1,10 +1,10 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import { useScroll, useTransform, useMotionValue, useSpring, motion } from 'framer-motion';
+import { useScroll, useTransform, useMotionValue, useSpring, motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useHeroStore } from '@/store/heroStore';
-import { TechCard, GridScanner } from '@/components/SciFiUI';
+import { TechCard, GridScanner, LiveData, CoreVisualizer } from '@/components/SciFiUI';
 
 /* Lazy-load canvas to avoid SSR issues */
 const HeroScene = dynamic(() => import('@/components/canvas/HeroScene'), {
@@ -16,157 +16,105 @@ const HeroScene = dynamic(() => import('@/components/canvas/HeroScene'), {
 const PHASES = [
   {
     id: '01',
-    tag: 'THE BEGINNING',
-    sub: 'Curiosity Awakened.',
-    body: 'It all started with curiosity... One line of code changed everything.',
+    tag: 'THE SURFACE',
+    sub: 'Confidence Level: 100% (The Tutorial Era)',
+    body: 'Just watched a 10-minute "Become a Senior Dev" video. I am a God. I can build Facebook in a weekend. My code is poetic. My variable names are perfect. Life is good.',
     range: [0, 0.28],
     align: 'left',
   },
   {
     id: '02',
-    tag: 'THE FIRST CODE',
-    sub: 'Hello World.',
-    body: 'Hello World… my first step into a new world. The journey begins here.',
+    tag: 'THE TWILIGHT ZONE',
+    sub: 'Reality Check: 47 Chrome Tabs Open',
+    body: 'Entered the MERN stack. Why is CSS like this? Why does "npm install" take 3 years? I spend 4 hours debugging a semicolon and 2 minutes actually writing code. Send help.',
     range: [0.25, 0.53],
     align: 'right',
   },
   {
     id: '03',
-    tag: 'THE MATR1X',
-    sub: 'Floating code lines.',
-    body: 'The laptop screen glows brighter. Floating code lines appear in 3D space as reality shifts.',
+    tag: 'THE MIDNIGHT ABYSS',
+    sub: 'The 3 AM Hallucinations',
+    body: 'Training an AI model to solve my problems, but now the AI is also depressed. I have forgotten what the sun looks like. Stack Overflow is my only family now. If it works, DON’T TOUCH IT.',
     range: [0.50, 0.78],
     align: 'left',
   },
   {
     id: '04',
-    tag: 'THE DESCENT',
-    sub: 'A new dimension.',
-    body: 'Code starts multiplying. The background becomes dynamic. Prepared to descend into the chaos of creation. ↓',
+    tag: 'THE TRENCHES',
+    sub: 'Final Boss: Deployment',
+    body: 'It worked on my machine. It’s not working on the server. I am now 10% human, 90% caffeine, and 100% bugs. I have reached the bottom. Scroll to witness the final merge conflict. ↓',
     range: [0.75, 1.00],
     align: 'center',
   },
 ];
 
-/* ─── Glassmorphism text panel (Cyberpunk Theme) ─────────────────── */
-function PhasePanel({ phase, scrollYProgress }) {
-  const [start, end] = phase.range;
-  const midpoint = (start + end) / 2;
-
-  const rawOpacity = useTransform(
-    scrollYProgress,
-    [start, start + 0.07, midpoint, end - 0.07, end],
-    [0, 1, 1, 1, 0]
-  );
-  const opacity = useSpring(rawOpacity, { stiffness: 80, damping: 20 });
-
-  const y = useTransform(scrollYProgress, [start, end], ['2rem', '-2rem']);
-  const smoothY = useSpring(y, { stiffness: 60, damping: 18 });
-
-  const alignClass =
-    phase.align === 'right'
-      ? 'items-end text-right ml-auto mr-8 md:mr-16'
-      : phase.align === 'center'
-        ? 'items-center text-center mx-auto'
-        : 'items-start text-left ml-8 md:ml-16';
-
-  return (
-    <motion.div
-      style={{ opacity, y: smoothY }}
-      className={`absolute bottom-[15%] flex flex-col gap-2 max-w-sm md:max-w-md ${alignClass} pointer-events-none`}
-    >
-      {/* Phase badge */}
-      <div className="flex items-center gap-2">
-        <span
-          className="text-[10px] md:text-xs tracking-[0.3em] text-orange-400 uppercase"
-          style={{ fontFamily: "var(--font-mono)" }}
-        >
-          {phase.id} // {phase.tag}
-        </span>
-        <div className="h-px w-8 bg-orange-400/60" />
-      </div>
-
-      <TechCard className="max-w-sm" delay={0.1}>
-        <h3
-          className="text-slate-200 text-lg md:text-2xl font-bold leading-tight mb-2"
-          style={{ fontFamily: "var(--font-sans)" }}
-        >
-          {phase.sub}
-        </h3>
-        <p
-          className="text-orange-400/70 text-xs md:text-sm tracking-wide leading-relaxed"
-          style={{ fontFamily: "var(--font-mono)" }}
-        >
-          {phase.body}
-        </p>
-      </TechCard>
-    </motion.div>
-  );
-}
-
-/* ─── Scroll progress bar (3-Color Gradient) ─────────────────────── */
-function ScrollBar({ scrollYProgress, overlayOpacity }) {
-  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
-  return (
-    <motion.div
-      className="fixed bottom-0 left-0 h-[2px] w-full origin-left z-50"
-      style={{
-        scaleX,
-        opacity: overlayOpacity,
-        background: 'linear-gradient(90deg, #f97316, #ea580c, #fdba74)',
-        boxShadow: '0 0 15px rgba(234,88,12, 0.8)',
-      }}
-    />
-  );
-}
-
-/* ─── Corner HUD ─────────────────────────────────────────────────── */
-function CornerHUD({ scrollYProgress, overlayOpacity }) {
+/* ─── Telemetry Sidebar ─────────────────── */
+function DashboardSidebar({ scrollYProgress, isMobile }) {
   const [pct, setPct] = useState(0);
   useEffect(() => {
     return scrollYProgress.on('change', (v) => setPct(Math.round(v * 100)));
   }, [scrollYProgress]);
 
-  const activePhase = PHASES.find(
-    (p) => pct / 100 >= p.range[0] && pct / 100 < p.range[1]
-  ) ?? PHASES[0];
+  const activeIndex = PHASES.findIndex((p) => pct / 100 >= p.range[0] && pct / 100 <= p.range[1]);
+  const activePhase = PHASES[activeIndex >= 0 ? activeIndex : 0];
+
+  const yOpacity = useTransform(scrollYProgress, [0.85, 0.95], [1, 0]);
 
   return (
-    <motion.div
-      className="fixed top-6 right-6 z-50 flex flex-col items-end gap-1 select-none pointer-events-none"
-      style={{ fontFamily: "var(--font-mono)", opacity: overlayOpacity }}
+    <motion.div 
+      style={{ opacity: yOpacity }}
+      className={`fixed ${isMobile ? 'bottom-0 left-0 w-full' : 'top-1/2 -translate-y-1/2 left-8 w-80'} z-40 pointer-events-none`}
     >
-      <span className="text-[10px] text-orange-500/70 tracking-widest uppercase">
-        Developer-Life
-      </span>
-      <span className="text-xs text-slate-200/40">{String(pct).padStart(3, '0')}%</span>
-      <div className="h-px w-10 bg-orange-500/30" />
-      <span className="text-[9px] text-orange-400/50 tracking-[0.2em] uppercase">
-        {activePhase.id} // {activePhase.tag}
-      </span>
-    </motion.div>
-  );
-}
+      <TechCard className="backdrop-blur-2xl bg-black/40 border-orange-500/20 shadow-2xl">
+        {/* Core Visualizer */}
+        {!isMobile && (
+           <div className="flex justify-center mb-6 border-b border-orange-500/10 pb-6">
+              <CoreVisualizer size={120} />
+           </div>
+        )}
 
-/* ─── Scroll hint ────────────────────────────────────────────────── */
-function ScrollHint({ scrollYProgress }) {
-  const opacity = useTransform(scrollYProgress, [0, 0.08], [1, 0]);
-  return (
-    <motion.div
-      style={{ opacity }}
-      className="fixed bottom-10 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 pointer-events-none"
-    >
-      <span
-        className="text-[10px] text-slate-200/40 tracking-[0.3em] uppercase"
-        style={{ fontFamily: "var(--font-mono)" }}
-      >
-        Scroll to explore
-      </span>
-      <motion.div
-        className="w-px h-8 bg-gradient-to-b from-orange-400/60 to-transparent"
-        animate={{ scaleY: [1, 0.3, 1], opacity: [0.6, 0.2, 0.6] }}
-        transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-      />
+        {/* Live Data Grid */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+           <LiveData min={40} max={99} label="CPU USAGE" unit="%" />
+           <LiveData min={10} max={100} label="I/O THREADS" unit="mb/s" />
+        </div>
+
+        {/* Narrative Timeline */}
+        <div className="space-y-4">
+            <h4 className="text-xs font-mono text-slate-500 uppercase tracking-widest border-b border-slate-800 pb-2">
+               Timeline Diagnostics
+            </h4>
+            
+            <AnimatePresence mode="popLayout">
+               <motion.div 
+                  key={activePhase.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                  className="bg-orange-500/10 border-l-2 border-orange-500 p-4 rounded-r-lg"
+               >
+                  <span className="text-[10px] text-orange-400 font-mono tracking-widest block mb-1">
+                     PHASE {activePhase.id} // {activePhase.tag}
+                  </span>
+                  <p className="text-slate-200 font-bold mb-1 font-sans">{activePhase.sub}</p>
+                  <p className="text-[11px] text-slate-400 font-mono tracking-wide leading-relaxed">
+                     {activePhase.body}
+                  </p>
+               </motion.div>
+            </AnimatePresence>
+        </div>
+
+        {/* Timeline dots */}
+        <div className="flex items-center gap-2 mt-6 justify-center">
+            {PHASES.map((p, idx) => (
+                <div 
+                   key={p.id} 
+                   className={`h-1.5 transition-all duration-300 ${idx === activeIndex ? 'w-8 bg-orange-500 shadow-[0_0_10px_#f97316]' : 'w-2 bg-slate-800'}`}
+                />
+            ))}
+        </div>
+      </TechCard>
     </motion.div>
   );
 }
@@ -175,6 +123,7 @@ function ScrollHint({ scrollYProgress }) {
 export default function Hero() {
   const isLoaded = useHeroStore((s) => s.isLoaded);
   const setIsMobile = useHeroStore((s) => s.setIsMobile);
+  const isMobile = useHeroStore((s) => s.isMobile);
 
   /* Pinned scroll container */
   const containerRef = useRef(null);
@@ -191,19 +140,21 @@ export default function Hero() {
 
   /* Responsive detection */
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
+    const check = () => setIsMobile(window.innerWidth < 1024);
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, [setIsMobile]);
 
-  /* Global fade-out for textual UI before lid opens */
-  const overlayOpacity = useTransform(scrollYProgress, [0.8, 0.85], [1, 0]);
+  /* Hero Typography Scales */
+  const titleY = useTransform(scrollYProgress, [0, 0.25], [0, -500]);
+const titleOpacity = useTransform(scrollYProgress, [0.15, 0.25], [1, 0]);
+  
 
   return (
     <>
       {/* 400vh scroll driver */}
-      <div ref={containerRef} className="relative h-[400vh] bg-slate-950">
+      <div ref={containerRef} className="relative h-[400vh] bg-transparent">
 
         {/* ── Pinned 3D canvas (full viewport) ── */}
         <motion.div
@@ -214,72 +165,69 @@ export default function Hero() {
         >
           <HeroScene scrollProgress={scrollMV} />
 
-          {/* Heavy Vignette overlay to boost contrast */}
+          {/* Environmental Grid overlay */}
+          <GridScanner />
+
+          {/* Heavy Vignette gradient */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background:
-                'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 30%, rgba(2,6,23,0.85) 100%)',
+              background: 'radial-gradient(circle at 70% 50%, transparent 20%, rgba(2,6,23,0.95) 80%)',
             }}
           />
 
-          <GridScanner />
-
-          {/* Phase text panels */}
-          <motion.div className="absolute inset-0 pointer-events-none" style={{ opacity: overlayOpacity }}>
-            {PHASES.map((phase) => (
-              <PhasePanel
-                key={phase.id}
-                phase={phase}
-                scrollYProgress={scrollYProgress}
-              />
-            ))}
-          </motion.div>
-
-          {/* Hero headline (Matching the Preloader aesthetic) */}
-          <motion.div
-            className="absolute top-[12%] left-1/2 -translate-x-1/2 text-center pointer-events-none w-full px-6 flex flex-col items-center"
-            style={{
-              opacity: useTransform(scrollYProgress, [0.75, 0.82], [1, 0]),
-              scale: useTransform(scrollYProgress, [0.75, 0.85], [1, 0.9]),
-            }}
+          {/* High-End Typography Header */}
+          <motion.div 
+             style={{ 
+  y: titleY, 
+  opacity: titleOpacity
+}}
+             
+             className={`absolute ${isMobile ? 'top-[10%] left-6' : 'top-[15%] left-[30rem]'} pointer-events-none z-10`}
           >
-            <h1
-              className="text-5xl md:text-8xl lg:text-[9rem] font-black text-slate-200 leading-none tracking-tighter"
-              style={{ fontFamily: "var(--font-display)", transform: "scaleX(1.3)" }}
-            >
-              Developer
-            </h1>
-            <h1
-              className="text-6xl md:text-8xl lg:text-[10rem] font-black tracking-tighter -mt-2 md:-mt-6"
-              style={{
-                fontFamily: "var(--font-sans)",
-                transform: "scaleX(1.3)",
-                backgroundImage: 'linear-gradient(to right, #f97316, #ea580c, #fdba74)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                filter: 'drop-shadow(0 10px 30px rgba(234,88,12, 0.3))'
-              }}
-            >
-              Life
-            </h1>
-            
-            <p
-              className="mt-8 md:mt-12 flex items-center gap-2 md:gap-3 text-slate-200/40 text-[9px] md:text-xs tracking-[0.4em] uppercase"
-              style={{ fontFamily: "var(--font-mono)" }}
-            >
-              The Architect <span className="text-orange-500">•</span> The Grind <span className="text-[#fdba74]">•</span> The Persistence
-            </p>
+              <div className="overflow-hidden">
+                 <motion.h1 
+                    initial={{ y: 50 }} animate={{ y: 0 }} transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
+                    className="text-6xl md:text-8xl lg:text-[10rem] font-sans font-black tracking-tighter text-slate-100 uppercase"
+                    style={{ lineHeight: 0.9 }}
+                 >
+                    Life Of 
+                 </motion.h1>
+              </div>
+              <div className="overflow-hidden">
+                 <motion.h1 
+                    initial={{ y: 50 }} animate={{ y: 0 }} transition={{ delay: 0.7, duration: 0.8, ease: "easeOut" }}
+                    className="text-6xl md:text-8xl lg:text-[10rem] font-sans font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-300 uppercase drop-shadow-[0_0_30px_rgba(249,115,22,0.4)]"
+                    style={{ lineHeight: 0.9 }}
+                 >
+                    Developer
+                 </motion.h1>
+              </div>
+              
+              <motion.div 
+                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}
+                 className="mt-6 md:mt-10 flex items-center gap-4 border-l-2 border-orange-500 pl-4 max-w-sm"
+              >
+                  {/* <p className="text-slate-400 font-mono text-xs md:text-sm tracking-wide leading-relaxed">
+                     Building digital systems from chaos. Scroll to initialize the timeline and open the node core.
+                  </p> */}
+              </motion.div>
           </motion.div>
 
-          {/* Scroll hint */}
-          <ScrollHint scrollYProgress={scrollYProgress} />
+          {/* New Left Sidebar replacing floating panels */}
+          <DashboardSidebar scrollYProgress={scrollYProgress} isMobile={isMobile} />
+
+          {/* Scroll progress bar (Orange Glow) */}
+          <motion.div
+             className="absolute bottom-0 left-0 h-[3px] origin-left z-50 bg-orange-500 shadow-[0_0_20px_#f97316]"
+             style={{
+                width: "100%",
+                scaleX: useSpring(scrollYProgress, { stiffness: 100, damping: 30 }),
+                opacity: useTransform(scrollYProgress, [0.8, 0.9], [1, 0])
+             }}
+          />
         </motion.div>
       </div>
-
-      {/* Fixed UI elements */}
-      <ScrollBar scrollYProgress={scrollYProgress} overlayOpacity={overlayOpacity} />
-      <CornerHUD scrollYProgress={scrollYProgress} overlayOpacity={overlayOpacity} />
     </>
   );
 }

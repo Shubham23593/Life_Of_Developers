@@ -81,7 +81,7 @@ export default function DebuggingDescent() {
     }, []);
 
     return (
-        <div ref={wrapperRef} className="relative w-full bg-slate-950">
+        <div ref={wrapperRef} className="relative w-full bg-transparent">
             <section
                 ref={containerRef}
                 className="relative h-screen w-full overflow-hidden flex items-center"
