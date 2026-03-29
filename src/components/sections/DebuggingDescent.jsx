@@ -1,44 +1,35 @@
 'use client';
 
 import { useRef, useLayoutEffect } from 'react';
-import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-const CARDS = [
-    { id: 1, title: 'Errors... Everywhere.', body: "Sudden glitch. Red error messages flood the screen. The compiler is shouting. The system is breaking." },
-    { id: 2, title: 'Nothing Worked.', body: "Hours of debugging lead nowhere. The code makes no sense. The frustration builds. Doubts start creeping in." },
-    { id: 3, title: 'But I Didn\'t Stop.', body: "A deep breath. One line at a time. The errors begin to slowly fade. Chaos starts transitioning into clarity." },
-];
-
 const ERRORS = [
-    { text: 'CORS Error', left: '10%', top: '75%' },
-    { text: 'Missing ;', left: '80%', top: '85%' },
-    { text: '404 Not Found', left: '15%', top: '105%' },
-    { text: 'Unexpected Token <', left: '75%', top: '125%' },
-    { text: 'Null Pointer Exception', left: '20%', top: '145%' },
-    { text: 'undefined is not a function', left: '60%', top: '165%' },
-    { text: 'Maximum Call Stack', left: '80%', top: '70%' },
+    "TypeError: undefined is not a function",
+    "Unhandled Rejection (NetworkError)",
+    "Maximum call stack size exceeded",
+    "Missing dependency in useEffect",
+    "Cannot read property 'map' of null",
+    "Warning: React has detected a change in the order of Hooks",
+    "CORS policy: No 'Access-Control-Allow-Origin' header is present"
 ];
 
 export default function DebuggingDescent() {
     const wrapperRef = useRef(null);
     const containerRef = useRef(null);
-    const cardsRef = useRef([]);
-
-    // 1. NEW: Add a ref to control the character's final fall
-    const charRef = useRef(null);
+    const terminalRef = useRef(null);
+    const devImgRef = useRef(null);
+    const marqueeRef1 = useRef(null);
+    const marqueeRef2 = useRef(null);
+    const textLinesRef = useRef([]);
 
     useLayoutEffect(() => {
         gsap.registerPlugin(ScrollTrigger);
 
         let ctx = gsap.context(() => {
-            if (cardsRef.current.length !== 3) return;
+            if (!wrapperRef.current || !containerRef.current) return;
 
-            // Securely push Cards 2 and 3 down out of view before scroll starts
-            gsap.set(cardsRef.current[1], { y: 600, opacity: 0 });
-            gsap.set(cardsRef.current[2], { y: 600, opacity: 0 });
-
+            // Pin the container for 400vh
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: wrapperRef.current,
@@ -49,31 +40,45 @@ export default function DebuggingDescent() {
                 },
             });
 
-            // Errors float up endlessly over the whole scroll distance
-            tl.to('.ambient-error', { y: -1200, duration: 4, ease: 'none' }, 0);
+            // 1. Marquee Parallax (Opposite directions)
+            tl.to(marqueeRef1.current, { x: '-20%', ease: 'none' }, 0);
+            tl.to(marqueeRef2.current, { x: '20%', ease: 'none' }, 0);
 
-            // SCROLL PHASE 1: Card 2 comes up.
-            tl.to(cardsRef.current[0], { scale: 0.95, y: -25, opacity: 0.5, duration: 1 }, 0)
-                .to(cardsRef.current[1], { y: 0, opacity: 1, duration: 1, ease: 'power2.out' }, 0);
+            // 2. Terminal Scales Up and shakes
+            tl.fromTo(terminalRef.current, 
+                { scale: 0.8, y: 150, rotationX: 10, opacity: 0 },
+                { scale: 1, y: 0, rotationX: 0, opacity: 1, duration: 1.5, ease: "power2.out" }, 
+                0
+            );
 
-            // A tiny pause so the user can read Card 2
-            tl.to({}, { duration: 0.5 });
+            // 3. Falling Developer Image scales and dives
+            tl.to(devImgRef.current, { scale: 0.6, y: 150, rotation: 15, duration: 2 }, 0);
 
-            // SCROLL PHASE 2: Card 3 comes up.
-            tl.to(cardsRef.current[0], { scale: 0.90, y: -50, opacity: 0.2, duration: 1 }, 1.5)
-                .to(cardsRef.current[1], { scale: 0.95, y: -25, opacity: 0.5, duration: 1 }, 1.5)
-                .to(cardsRef.current[2], { y: 0, opacity: 1, duration: 1, ease: 'power2.out' }, 1.5);
+            // 4. Sequential Text Revelations in Terminal
+            textLinesRef.current.forEach((line, index) => {
+                tl.fromTo(line, 
+                    { opacity: 0, x: -30, filter: 'blur(10px)' },
+                    { opacity: 1, x: 0, filter: 'blur(0px)', duration: 0.8, ease: "power2.out" },
+                    index * 0.6 + 1
+                );
+            });
 
-            // SCROLL PHASE 3 (THE FIX): Add empty buffer time at the end! 
-            tl.to({}, { duration: 1.5 });
-
-            // 2. NEW: The Final Drop! 
-            // Plunge the character off the bottom of the screen just before the section unpins
-            tl.to(charRef.current, {
-                y: window.innerHeight + 800,
+            // 5. Epic climax: The resolution (Red terminal turns Cyan)
+            tl.to(terminalRef.current, { 
+                borderColor: 'rgba(6, 182, 212, 0.8)', // Cyan-500
+                boxShadow: '0 0 60px rgba(6, 182, 212, 0.5)',
                 duration: 1.5,
-                ease: 'power3.in'
-            }, "-=1"); // The '-=1' makes the fall start during the buffer time
+                ease: 'power2.inOut'
+            }, "-=1.5");
+
+            // Character plunges into the abyss
+            tl.to(devImgRef.current, { 
+                y: window.innerHeight + 800, 
+                scale: 0.2,
+                opacity: 0,
+                duration: 2, 
+                ease: 'power3.in' 
+            }, "-=1.5");
 
         }, wrapperRef);
 
@@ -82,96 +87,67 @@ export default function DebuggingDescent() {
 
     return (
         <div ref={wrapperRef} className="relative w-full bg-transparent">
-            <section
-                ref={containerRef}
-                className="relative h-screen w-full overflow-hidden flex items-center"
-            >
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#0f172a_0%,_#000000_100%)] pointer-events-none" />
-
-                <div className="absolute top-8 left-8 md:top-12 md:left-12 z-50 pointer-events-none">
-                    <div className="flex items-center gap-3">
-                        <span className="text-[10px] md:text-xs font-mono tracking-[0.4em] text-slate-200/80 uppercase">
-                            PHASE // 02
-                        </span>
-                        <div className="h-px w-10 bg-gradient-to-r from-orange-400/50 to-transparent" />
+            {/* Height 100vh because the ScrollTrigger pins it */}
+            <section ref={containerRef} className="relative h-screen w-full overflow-hidden flex flex-col items-center justify-center pointer-events-none">
+                
+                {/* Background Marquees */}
+                <div className="absolute inset-0 flex flex-col justify-between py-[15vh] opacity-30 mix-blend-screen overflow-hidden z-0">
+                    <div ref={marqueeRef1} className="flex whitespace-nowrap text-red-500 font-mono text-opacity-40 text-6xl md:text-[8rem] font-black w-[400vw] -ml-[50vw]">
+                        {ERRORS.join(" // ")} // {ERRORS.join(" // ")}
                     </div>
-                    <h2
-                        className="text-3xl md:text-5xl lg:text-6xl font-bold text-orange-400/95 tracking-tighter mt-3"
-                        style={{ fontFamily: "var(--font-sans)" }}
-                    >
-                        THE STRUGGLE
-                    </h2>
+                    <div ref={marqueeRef2} className="flex whitespace-nowrap text-orange-500 font-mono text-opacity-40 text-6xl md:text-[8rem] font-black w-[400vw] -ml-[150vw]">
+                       FATAL_ERROR // OUT_OF_MEMORY // SYNTAX_ERROR // FATAL_ERROR // OUT_OF_MEMORY // SYNTAX_ERROR
+                    </div>
                 </div>
 
-                <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 h-full w-full max-w-7xl pt-[100px] lg:pt-0">
+                {/* Floating Character */}
+                <div className="absolute inset-0 flex justify-center items-center z-10 pointer-events-none transition-transform">
+                     <div ref={devImgRef} className="relative w-72 md:w-[28rem] drop-shadow-[0_0_30px_rgba(255,0,0,0.4)]">
+                        <img src="/image_c51503.png" alt="Falling Developer" className="w-full h-auto object-contain" />
+                     </div>
+                </div>
 
-                    <div className="relative h-full w-full flex items-center justify-center">
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-600/10 rounded-full blur-[100px] pointer-events-none" />
-
-                        {ERRORS.map((err, i) => (
-                            <div
-                                key={i}
-                                className="ambient-error absolute text-red-500/60 font-mono text-[10px] md:text-xs whitespace-nowrap pointer-events-none z-0 will-change-transform"
-                                style={{ left: err.left, top: err.top }}
-                            >
-                                <span className="bg-red-950/40 px-3 py-1.5 rounded border border-red-500/20">
-                                    {err.text}
-                                </span>
+                {/* Main Glassmorphism Terminal */}
+                <div className="relative z-20 w-[95%] md:w-[70%] lg:w-[50%] mt-48 md:mt-24 pointer-events-auto">
+                    <div ref={terminalRef} className="rounded-2xl border border-red-500/50 bg-[#05050a]/80 backdrop-blur-2xl shadow-[0_20px_60px_rgba(239,68,68,0.2)] overflow-hidden flex flex-col">
+                        
+                        {/* Terminal Header */}
+                        <div className="flex items-center justify-between px-6 py-3 bg-red-950/40 border-b border-red-500/30">
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-full bg-red-500/80 animate-pulse shadow-[0_0_10px_#ef4444]"></div>
+                                <div className="w-3 h-3 rounded-full bg-orange-400/80"></div>
+                                <div className="w-3 h-3 rounded-full bg-slate-600/80"></div>
                             </div>
-                        ))}
-
-                        {/* 3. NEW: Wrap the motion.div in a standard div to receive the GSAP charRef */}
-                        <div ref={charRef} className="relative z-10 w-80 md:w-[28rem] lg:w-[35rem] flex justify-center items-center will-change-transform">
-                            <motion.div
-                                className="w-full h-auto"
-                                animate={{ y: [0, -25, 0] }}
-                                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                            >
-                                <img
-                                    src="/image_c51503.png"
-                                    alt="Falling Developer"
-                                    className="w-full h-auto object-contain"
-                                />
-                            </motion.div>
+                            <span className="text-[10px] md:text-sm text-red-400/80 font-mono tracking-widest uppercase">root@dev-server: ~/THE_STRUGGLE</span>
                         </div>
-                    </div>
 
-                    <div className="relative h-[60vh] lg:h-full w-full flex items-center justify-center">
-                        <div className="relative w-full max-w-sm md:max-w-md h-[280px]">
-                            {CARDS.map((card, index) => (
-                                <div
-                                    key={card.id}
-                                    ref={(el) => { if (el) cardsRef.current[index] = el; }}
-                                    className="absolute inset-0 flex flex-col justify-center p-8 rounded-2xl shadow-2xl origin-top will-change-transform"
-                                    style={{
-                                        backgroundColor: '#090D1A',
-                                        border: '1px solid rgba(249,115,22, 0.2)',
-                                        boxShadow: '0 -20px 40px -10px rgba(0,0,0,0.8)',
-                                        zIndex: index,
-                                    }}
-                                >
-                                    <div className="flex items-center gap-4 mb-6">
-                                        <div className="w-10 h-10 rounded-lg bg-cyan-950 flex items-center justify-center border border-orange-400/50 text-slate-200/80 font-mono text-sm">
-                                            0{card.id}
-                                        </div>
-                                        <h3
-                                            className="text-orange-400 text-xl md:text-2xl font-bold tracking-tight"
-                                            style={{ fontFamily: "var(--font-sans)" }}
-                                        >
-                                            {card.title}
-                                        </h3>
-                                    </div>
+                        {/* Terminal Body */}
+                        <div className="p-6 md:p-12 font-mono text-sm md:text-lg flex flex-col gap-8 md:gap-10 min-h-[450px] relative">
+                            {/* CRT Scanline Overlay */}
+                            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,0,0,0.03)_50%,transparent_50%)] bg-[length:100%_4px] pointer-events-none" />
+                            
+                            <p ref={(el) => { if (el) textLinesRef.current[0] = el; }} className="text-red-400 flex items-start gap-4">
+                                <span className="text-red-900 select-none">~</span> 
+                                <span><span className="text-red-500 font-bold">ERROR:</span> System overloaded. Red text floods the monitor. The compiler rejects every operation.</span>
+                            </p>
 
-                                    <div className="w-full h-px bg-cyan-900/50 mb-6" />
+                            <p ref={(el) => { if (el) textLinesRef.current[1] = el; }} className="text-orange-400 flex items-start gap-4">
+                                <span className="text-orange-900 select-none">~</span> 
+                                <span><span className="text-orange-500 font-bold">WARN:</span> Hours of debugging lead down a dead end. Documentation provides no answers.</span>
+                            </p>
 
-                                    <p
-                                        className="text-slate-300 text-sm md:text-base leading-relaxed font-mono"
-                                        style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                                    >
-                                        {card.body}
-                                    </p>
-                                </div>
-                            ))}
+                            <p ref={(el) => { if (el) textLinesRef.current[2] = el; }} className="text-slate-300 flex items-start gap-4">
+                                <span className="text-slate-600 select-none">~</span> 
+                                <span><span className="text-indigo-400 font-bold">INFO:</span> Initiating deep-focus protocol. Tracing variables manually through the stack.</span>
+                            </p>
+
+                            <p ref={(el) => { if (el) textLinesRef.current[3] = el; }} className="text-cyan-400 flex items-start gap-4 mt-auto border-t border-cyan-500/20 pt-6">
+                                <span className="text-cyan-900 select-none">~</span> 
+                                <span><span className="text-cyan-500 font-bold leading-relaxed shadow-cyan-500/50 drop-shadow-md">SUCCESS:</span> Semicolon found. Syntax resolved. Chaos transitions into pure logic. System stable.</span>
+                            </p>
+
+                            {/* Blinking Cursor */}
+                            <div className="absolute bottom-10 left-12 w-3 h-6 bg-cyan-400 animate-[pulse_1s_step-start_infinite]"></div>
                         </div>
                     </div>
                 </div>

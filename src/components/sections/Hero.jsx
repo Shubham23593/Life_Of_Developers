@@ -63,7 +63,7 @@ function DashboardSidebar({ scrollYProgress, isMobile }) {
   return (
     <motion.div 
       style={{ opacity: yOpacity }}
-      className={`fixed ${isMobile ? 'bottom-0 left-0 w-full' : 'top-1/2 -translate-y-1/2 left-8 w-80'} z-40 pointer-events-none`}
+      className={`absolute ${isMobile ? 'bottom-0 left-0 w-full' : 'top-1/2 -translate-y-1/2 left-8 w-80'} z-40 pointer-events-none`}
     >
       <TechCard className="backdrop-blur-2xl bg-black/40 border-orange-500/20 shadow-2xl">
         {/* Core Visualizer */}
