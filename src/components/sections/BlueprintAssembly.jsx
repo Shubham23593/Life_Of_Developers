@@ -97,7 +97,7 @@ export default function BlueprintAssembly() {
                 
                 {/* --- 1. LEFT STATIC COLUMN (The Dashboard HUD) --- */}
                 {/* Fixed rigidly to the left side, z-index 40 so it floats OVER the horizontally scrolling cards */}
-                <div className="absolute top-0 left-0 w-full lg:w-[35%] h-full flex flex-col justify-between pt-8 md:pt-12 px-6 md:px-12 z-40 bg-gradient-to-r from-[#030305] via-[#050508]/90 to-transparent pointer-events-none">
+                <div className="absolute top-0 left-0 w-full lg:w-[35%] h-full flex flex-col justify-between pt-8 md:pt-12 px-6 md:px-12 z-40 bg-gradient-to-r from-[#030305] via-[#050508]/40 to-transparent pointer-events-none">
                     
                     {/* Top HUD Title */}
                     <div ref={uiRef}>

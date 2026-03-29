@@ -1,262 +1,241 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
-import {
-    useScroll, useMotionValue, useTransform, useSpring,
-    motion, AnimatePresence,
-} from 'framer-motion';
+import { useRef, useLayoutEffect } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useMotionValue } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useHeroStore } from '@/store/heroStore';
+import { Briefcase, Flame, Lightbulb, Rocket } from 'lucide-react';
 
 const DeploymentScene = dynamic(() => import('@/components/canvas/Deploymentscene'), {
     ssr: false,
     loading: () => null,
 });
 
-/* ─────────────────────────────────────────────────────────────────
-   PHASE NARRATIVES — text cards that fade in/out per scroll phase
-───────────────────────────────────────────────────────────────── */
 const NARRATIVE_PHASES = [
     {
         id: 'phase-floor',
-        range: [0, 0.18],
         badge: '04 // REAL WORLD',
-        title: 'Deadlines. Clients.\nPressure.',
-        body: 'Code became my career. The stakes are much higher now.',
-        align: 'left',
+        title: 'Deadlines & Pressure',
+        body: 'Code became my career. The stakes are much higher now. Every bug directly impacts production.',
+        icon: <Briefcase size={24} />,
+        accent: 'from-blue-500 to-indigo-500',
+        glow: 'shadow-[0_0_30px_#3b82f6]',
+        textColor: 'text-blue-400'
     },
     {
         id: 'phase-rise',
-        range: [0.22, 0.40],
         badge: '05 // THE BURNOUT',
-        title: 'Sleepless\nnights.',
-        body: 'Endless debugging… Doubt and exhaustion… It feels like the weight of the world is on your shoulders.',
-        align: 'right',
+        title: 'Sleepless Nights',
+        body: 'Endless debugging. Doubt and exhaustion setting in. It feels like the weight of the server is on your shoulders.',
+        icon: <Flame size={24} />,
+        accent: 'from-red-500 to-orange-500',
+        glow: 'shadow-[0_0_30px_#ef4444]',
+        textColor: 'text-red-400'
     },
     {
         id: 'phase-screen',
-        range: [0.45, 0.65],
         badge: '06 // BREAKTHROUGH',
-        title: 'Then I\nrealized…',
-        body: 'Growth takes time. The struggles are just stepping stones to greatness.',
-        align: 'center',
+        title: 'The Realization',
+        body: 'Growth takes time. The struggles are not failures, they are the stepping stones to total system mastery.',
+        icon: <Lightbulb size={24} />,
+        accent: 'from-cyan-400 to-emerald-400',
+        glow: 'shadow-[0_0_30px_#22d3ee]',
+        textColor: 'text-cyan-400'
     },
     {
         id: 'phase-mastery',
-        range: [0.72, 0.90],
-        badge: '07 // THE JOURNEY',
-        title: 'I became a\ndeveloper…',
-        body: 'But the journey never ends. Every new project is a new beginning. Let continuous learning lead the way.',
-        align: 'left',
+        badge: '07 // MASTERY',
+        title: 'Deployment',
+        body: 'I became a developer... But the journey never ends. The pipeline is automated. The code is Poetry.',
+        icon: <Rocket size={24} />,
+        accent: 'from-orange-500 to-yellow-400',
+        glow: 'shadow-[0_0_30px_#f97316]',
+        textColor: 'text-orange-400'
     },
 ];
 
-/* ─────────────────────────────────────────────────────────────────
-   NARRATIVE PANEL (Glassmorphism + Cyan/Purple theme)
-───────────────────────────────────────────────────────────────── */
-function NarrativePanel({ phase, scrollYProgress }) {
-    const [start, end] = phase.range;
-    const mid = (start + end) / 2;
-
-    const rawOpacity = useTransform(
-        scrollYProgress,
-        [start, start + 0.05, mid, end - 0.05, end],
-        [0, 1, 1, 1, 0]
-    );
-    const opacity = useSpring(rawOpacity, { stiffness: 75, damping: 20 });
-    const rawY = useTransform(scrollYProgress, [start, end], ['1.8rem', '-1.8rem']);
-    const y = useSpring(rawY, { stiffness: 60, damping: 18 });
-
-    const alignClass =
-        phase.align === 'right'
-            ? 'items-end text-right ml-auto mr-8 md:mr-16'
-            : phase.align === 'center'
-                ? 'items-center text-center mx-auto'
-                : 'items-start text-left ml-8 md:ml-16';
-
-    return (
-        <motion.div
-            style={{ opacity, y }}
-            className={`absolute bottom-[14%] flex flex-col gap-2 max-w-xs md:max-w-sm ${alignClass} pointer-events-none`}
-        >
-            <div className="flex items-center gap-2">
-                <span style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '10px',
-                    color: '#f97316', // Cyan
-                    letterSpacing: '0.28em',
-                    textTransform: 'uppercase',
-                }}>
-                    {phase.badge}
-                </span>
-                <div style={{ height: '1px', width: '28px', background: 'rgba(249,115,22,0.45)' }} />
-            </div>
-
-            <div style={{
-                background: 'rgba(0,0,0,0.6)',
-                border: '1px solid rgba(234,88,12,0.3)', // Deep Purple border
-                borderRadius: '10px',
-                padding: '14px 18px',
-                backdropFilter: 'blur(14px)',
-                boxShadow: '0 0 30px rgba(249,115,22,0.05), inset 0 1px 0 rgba(249,115,22,0.05)',
-            }}>
-                <h3 style={{
-                    fontFamily: "var(--font-sans)",
-                    fontSize: '1.35rem',
-                    color: '#f97316',
-                    fontWeight: 800,
-                    margin: '0 0 6px',
-                    lineHeight: 1.25,
-                    whiteSpace: 'pre-line',
-                }}>
-                    {phase.title}
-                </h3>
-                <p style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '11px',
-                    color: 'rgba(249,115,22,0.7)', // Cyan text
-                    margin: 0,
-                    lineHeight: 1.6,
-                    letterSpacing: '0.02em',
-                }}>
-                    {phase.body}
-                </p>
-            </div>
-        </motion.div>
-    );
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   SCROLL PROGRESS BAR — Signature Gradient
-───────────────────────────────────────────────────────────────── */
-function GradientScrollBar({ scrollYProgress }) {
-    const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
-    return (
-        <motion.div
-            className="fixed bottom-0 left-0 h-[2px] w-full origin-left z-50"
-            style={{
-                scaleX,
-                background: 'linear-gradient(90deg, #f97316, #ea580c, #f97316)',
-                boxShadow: '0 0 15px rgba(234,88,12,0.8)',
-            }}
-        />
-    );
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   CORNER HUD — Cyan Minimalist
-───────────────────────────────────────────────────────────────── */
-function CornerHUD({ scrollYProgress }) {
-    const [pct, setPct] = useState(0);
-    useEffect(() => scrollYProgress.on('change', v => setPct(Math.round(v * 100))), [scrollYProgress]);
-
-    const op = useTransform(scrollYProgress, [0.02, 0.08], [0, 1]);
-    const label = pct < 25 ? 'Floor Level' : pct < 55 ? 'Ascending…' : pct < 83 ? 'Approaching Screen' : 'Deployed ✓';
-
-    return (
-        <motion.div
-            style={{ opacity: op }}
-            className="fixed top-6 right-6 z-50 flex flex-col items-end gap-1 select-none pointer-events-none"
-        >
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(249,115,22,0.55)', letterSpacing: '0.3em', textTransform: 'uppercase' }}>
-                Chapter-04
-            </span>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'rgba(249,115,22,0.4)' }}>
-                {String(pct).padStart(3, '0')}%
-            </span>
-            <div style={{ height: '1px', width: '36px', background: 'rgba(249,115,22,0.3)' }} />
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(249,115,22,0.5)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-                {label}
-            </span>
-        </motion.div>
-    );
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   CHAPTER ENTRY BADGE — Fades in then out
-───────────────────────────────────────────────────────────────── */
-function EntryBadge({ scrollYProgress }) {
-    const opacity = useTransform(scrollYProgress, [0, 0.05, 0.18, 0.28], [0, 1, 1, 0]);
-    const rawY = useTransform(scrollYProgress, [0, 0.05], ['1.2rem', '0rem']);
-    const y = useSpring(rawY, { stiffness: 90, damping: 22 });
-
-    return (
-        <motion.div
-            style={{ opacity, y }}
-            className="absolute top-[10%] left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-3 pointer-events-none w-full px-6"
-        >
-            <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: '9px', color: 'rgba(249,115,22,0.5)', letterSpacing: '0.5em', textTransform: 'uppercase' }}>
-                [ Chapter 04 ]
-            </span>
-            <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 'clamp(2.2rem,5.5vw,4.5rem)', fontWeight: 900, color: '#f97316', textAlign: 'center', lineHeight: 1, margin: 0 }}>
-                The Continuous{' '}
-                <span style={{ background: 'linear-gradient(135deg, #f97316, #ea580c, #fdba74)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 0 14px rgba(249,115,22,0.5))' }}>
-                    Journey
-                </span>
-            </h2>
-            <p style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: '11px', color: 'rgba(249,115,22,0.28)', letterSpacing: '0.22em', textTransform: 'uppercase', textAlign: 'center', margin: 0 }}>
-                Growth takes time · Continuous Learning
-            </p>
-        </motion.div>
-    );
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   CHAPTER 04 — main export (Renamed logically from 03 to 04)
-───────────────────────────────────────────────────────────────── */
 export default function Chapter04() {
     const isMobile = useHeroStore(s => s.isMobile);
 
+    const wrapperRef = useRef(null);
     const containerRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ['start start', 'end end'],
-    });
+    const wheelRef = useRef(null);
+    const cardsRef = useRef([]);
+    const titleRef = useRef(null);
 
+    // Provide a motion value for the 3D scene background to interpret scroll progress natively
     const scrollMV = useMotionValue(0);
-    useEffect(() => scrollYProgress.on('change', v => scrollMV.set(v)), [scrollYProgress, scrollMV]);
+
+    useLayoutEffect(() => {
+        gsap.registerPlugin(ScrollTrigger);
+
+        let ctx = gsap.context(() => {
+            if (!wrapperRef.current || !wheelRef.current) return;
+
+            // Massive Orbital GSAP Timeline (400vh bound)
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: wrapperRef.current,
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    scrub: 1, // Flawless continuous tracking
+                    onUpdate: (self) => {
+                        // Pass math to the 3D scene
+                        scrollMV.set(self.progress);
+                    }
+                },
+            });
+
+            // 1. Initial fade-in of the orbital structure
+            gsap.set(wheelRef.current, { opacity: 0, scale: 0.8, y: 100 });
+            gsap.set(titleRef.current, { opacity: 0, y: -50 });
+
+            tl.to(wheelRef.current, { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0);
+            tl.to(titleRef.current, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0);
+
+            // 2. The Great Orbital Rotation (Math is beautiful)
+            // 4 Cards separated by 40 degrees. Total rotation needed to bring the last card to Top-Center is -120 degrees.
+            const totalDegrees = 120; // 3 gaps * 40 = 120
+            
+            // Spin the master wheel Left
+            tl.to(wheelRef.current, { 
+                rotation: -totalDegrees, 
+                duration: 4, 
+                ease: "none" 
+            }, 0.5); // Start spinning after the fade-in
+
+            // Counter-spin ALL cards mathematically to exactly offset the wheel, keeping the text upright!
+            cardsRef.current.forEach((card) => {
+                tl.to(card, { 
+                    rotation: `+=${totalDegrees}`, // whatever its current start rotation is, add 120!
+                    duration: 4, 
+                    ease: "none" 
+                }, 0.5);
+            });
+
+            // 3. Highlight states based on top-dead-center proximity
+            // Provide a pulse to the card that is currently hovering near the center
+            const stepDur = 4 / 3; // 4 duration divided by 3 transitions
+            let t = 0.5; // start time aligned with rotation start
+            
+            cardsRef.current.forEach((card, i) => {
+                // Dim all initially except the first
+                if (i !== 0) gsap.set(card, { opacity: 0.3, filter: 'grayscale(100%) blur(5px)', scale: 0.8 });
+                
+                // When this card reaches the top dead center (time = 0.5 + i * stepDur)
+                tl.to(card, { 
+                    opacity: 1, 
+                    filter: 'grayscale(0%) blur(0px)', 
+                    scale: 1.1, 
+                    duration: 0.5, 
+                    ease: 'power2.out',
+                    yoyo: true,  // It dims again as it leaves the top!
+                    repeat: i === 3 ? 0 : 1 // The final card stays highlighted!
+                }, t);
+
+                t += stepDur;
+            });
+
+        }, wrapperRef);
+
+        return () => ctx.revert();
+    }, [scrollMV]);
+
+    // Orbital Math Layout configuration
+    // Determine the literal CSS radius size of the orbital wheel based on responsive assumptions
+    const wheelSizeStyle = "w-[1200px] h-[1200px] md:w-[1500px] md:h-[1500px]";
+    const radiusOffset = "translateY(-550px) md:translateY(-700px)"; // The distance from center to the perimeter
+    const angleStep = 40; // Degrees between each card on the orbital arc
 
     return (
-        <>
-            {/* 400vh scroll driver */}
-            <section
-                ref={containerRef}
-                id="chapter-04"
-                className="relative h-[400vh]"
-                style={{ background: '#000000' }} // Pitch black background
-            >
-                {/* Sticky viewport */}
-                <div className="sticky top-0 w-full h-screen overflow-hidden">
-
-                    {/* 3-D scene */}
-                    <DeploymentScene scrollProgress={scrollMV} isMobile={isMobile} />
-
-                    {/* Gradient bridge to blend out from the previous section */}
-                    <div
-                        className="absolute inset-x-0 top-0 h-32 pointer-events-none z-20"
-                        style={{ background: 'linear-gradient(to bottom, #000000 0%, transparent 100%)' }}
-                    />
-
-                    {/* Heavy Vignette to keep the edges dark and focus on neon */}
-                    <div
-                        className="absolute inset-0 pointer-events-none z-10"
-                        style={{ background: 'radial-gradient(ellipse 90% 90% at 50% 50%, transparent 30%, rgba(0,0,0,0.85) 100%)' }}
-                    />
-
-                    {/* Entry badge */}
-                    <EntryBadge scrollYProgress={scrollYProgress} />
-
-                    {/* Narrative phase panels */}
-                    {NARRATIVE_PHASES.map(phase => (
-                        <NarrativePanel key={phase.id} phase={phase} scrollYProgress={scrollYProgress} />
-                    ))}
-
+        /* Structural safe boundary: 400vh */
+        <div ref={wrapperRef} className="relative w-full h-[400vh] bg-[#000000]">
+            
+            <div className="sticky top-0 w-full h-screen overflow-hidden bg-[#030305] flex items-center justify-center">
+                
+                {/* 1. The 3D Deployment Scene safely underneath the Orbital UI */}
+                <div className="absolute inset-0 z-0 opacity-80 mix-blend-screen pointer-events-none">
+                     <DeploymentScene scrollProgress={scrollMV} isMobile={isMobile} />
                 </div>
-            </section>
 
-            {/* Fixed chrome */}
-            <GradientScrollBar scrollYProgress={scrollYProgress} />
-            <CornerHUD scrollYProgress={scrollYProgress} />
-        </>
+                {/* Ambient Depth Gradients */}
+                <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black to-transparent z-10 pointer-events-none" />
+
+                {/* 2. Top Title Overlay */}
+                <div ref={titleRef} className="absolute top-[8vh] flex flex-col items-center z-40 text-center pointer-events-none">
+                     <span className="font-mono text-xs text-orange-400 tracking-[0.5em] uppercase mb-2">DEPLOYMENT PROTOCOL</span>
+                     <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mix-blend-plus-lighter">
+                         The Continuous <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-300">Journey</span>
+                     </h2>
+                </div>
+
+                {/* 3. THE GSAP ORBITAL RING ENGINE */}
+                {/* The wheel is anchored far below the screen so only the top half arc is visible tracking across the viewport */}
+                <div 
+                    className={`absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[55%] md:translate-y-[60%] rounded-full ${wheelSizeStyle} z-20 pointer-events-none`}
+                >
+                    {/* The Structural Wheel Lines which physically rotate */}
+                    <div ref={wheelRef} className="absolute inset-0 rounded-full border border-orange-500/20 shadow-[0_0_100px_rgba(249,115,22,0.05)] border-dashed">
+                        
+                        <div className="absolute inset-4 rounded-full border border-orange-400/10" />
+                        <div className="absolute inset-10 rounded-full border-2 border-orange-400/5 border-dotted" />
+
+                        {/* The Holographic Cards mounted precisely on the exact Mathematical Architecure of the Wheel */}
+                        {NARRATIVE_PHASES.map((phase, i) => (
+                            <div 
+                                key={phase.id}
+                                className="absolute top-1/2 left-1/2 w-0 h-0"
+                                style={{ transform: `rotate(${i * angleStep}deg)` }} // Spaced geometrically around the core
+                            >
+                                {/* Offset exactly to the rim of the 1200px wheel */}
+                                <div className={`absolute ${radiusOffset} -translate-x-1/2`}>
+                                    
+                                    {/* The GSAP Counter-Rotation Wrapper maintaining Text Gravity */}
+                                    <div 
+                                        ref={el => cardsRef.current[i] = el}
+                                        style={{ transform: `rotate(${-i * angleStep}deg)` }} // Initializes perfectly upright
+                                        className="pointer-events-auto"
+                                    >
+                                        
+                                        {/* THE ACTUAL NARRATIVE CARD */}
+                                        <div className={`w-[280px] md:w-[400px] p-6 md:p-8 bg-[#0a0a0f]/90 backdrop-blur-2xl border border-white/10 rounded-3xl ${phase.glow} transition-all duration-300 transform-style-3d`}>
+                                            
+                                            {/* Glowing Top Injection Line */}
+                                            <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${phase.accent} rounded-t-3xl`} />
+
+                                            <div className="flex items-start gap-4 mb-4">
+                                                <div className={`p-4 rounded-2xl bg-black/50 border border-white/10 ${phase.textColor}`}>
+                                                    {phase.icon}
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className={`font-mono text-[9px] md:text-[10px] tracking-widest uppercase ${phase.textColor} opacity-60`}>
+                                                        {phase.badge}
+                                                    </span>
+                                                    <h3 className="font-sans text-xl md:text-2xl font-black text-white uppercase tracking-tight leading-tight mt-1">
+                                                        {phase.title}
+                                                    </h3>
+                                                </div>
+                                            </div>
+
+                                            <p className="font-mono text-xs md:text-sm text-slate-300 leading-relaxed opacity-80">
+                                                {phase.body}
+                                            </p>
+                                        </div>
+
+                                        {/* Connecting Line physically locking the card to the wheel edge */}
+                                        <div className="absolute -bottom-16 md:-bottom-24 left-1/2 w-0.5 h-16 md:h-24 bg-gradient-to-b from-orange-500/50 to-transparent -translate-x-1/2" />
+                                        
+                                    </div>
+
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+            </div>
+        </div>
     );
 }
