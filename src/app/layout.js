@@ -35,10 +35,13 @@ export const metadata = {
 };
 
 /* ── Root Layout ────────────────────────────────────────────────── */
+import AnimatedCursor from '@/components/AnimatedCursor';
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrains.variable}`}>
-      <body className="bg-slate-950 text-slate-200 font-sans selection:bg-orange-500 selection:text-black antialiased overflow-x-hidden">
+      <body className="bg-slate-950 text-slate-200 font-sans selection:bg-orange-500 selection:text-black antialiased overflow-x-hidden cursor-default">
+        <AnimatedCursor />
         {children}
       </body>
     </html>

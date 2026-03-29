@@ -46,11 +46,14 @@ function lerpKeyframe(frames, t) {
 /* ══════════════════════════════════════════════════════════════════
    SPILLED COFFEE PUDDLE  — wet, glossy, dark brown
    ══════════════════════════════════════════════════════════════════ */
-function CoffeePuddle({ isMobile }) {
-    const xOffset = isMobile ? 0.15 : 1.25;
+function CoffeePuddle() {
+    const { viewport } = useThree();
+    const isSmall = viewport.width < 3.0; 
+    const xOffset = isSmall ? 0 : 0.85;
+    const scaleSize = isSmall ? 1.8 : 2.5;
     
     return (
-        <group position={[xOffset, 0.001, 0.3]} scale={2.5}>
+        <group position={[xOffset, 0.001, 0.3]} scale={scaleSize}>
             {/* Main puddle shape — custom irregular blob via scale */}
             <mesh rotation={[-Math.PI / 2, 0, 0.3]}>
                 <circleGeometry args={[0.38, 48]} />
@@ -81,12 +84,16 @@ function CoffeePuddle({ isMobile }) {
 /* ══════════════════════════════════════════════════════════════════
    SPLIT COFFEE MUG  — tilted, broken, dramatic
    ══════════════════════════════════════════════════════════════════ */
-function SplitCoffeeMug({ isMobile }) {
-    const xOffset = isMobile ? 0.15 : 1.25;
+function SplitCoffeeMug() {
+    const { viewport } = useThree();
+    const isSmall = viewport.width < 3.0;
+    const xOffset = isSmall ? 0 : 0.85;
+    const yOffset = isSmall ? 0.21 : 0.28;
+    const scaleSize = isSmall ? 1.8 : 2.5;
     
     return (
         <>
-            <group position={[xOffset, 0.28, 0.3]} rotation={[0.5, 0.4, 1.35]} scale={2.5}>
+            <group position={[xOffset, yOffset, 0.3]} rotation={[0.5, 0.4, 1.35]} scale={scaleSize}>
                 {/* Main cylinder body */}
                 <mesh castShadow>
                     <cylinderGeometry args={[0.095, 0.082, 0.21, 32]} />
@@ -125,7 +132,7 @@ function SplitCoffeeMug({ isMobile }) {
                 </mesh>
             </group>
             {/* Shards on the floor nearby */}
-            <group position={[xOffset, 0.01, 0.3]} scale={2.5}>
+            <group position={[xOffset, 0.01, 0.3]} scale={scaleSize}>
                 <mesh position={[-0.1, 0, 0.15]} rotation={[0.4, 0.1, 0]} castShadow>
                     <boxGeometry args={[0.03, 0.005, 0.02]} />
                     <meshPhysicalMaterial color="#f0f0f5" roughness={0.1} clearcoat={1.0} />
@@ -662,8 +669,8 @@ function Scene({ scrollProgress, isMobile }) {
             <Environment preset="night" />
 
             {/* Scene geometry (Void space) */}
-            <CoffeePuddle isMobile={isMobile} />
-            <SplitCoffeeMug isMobile={isMobile} />
+            <CoffeePuddle />
+            <SplitCoffeeMug />
             <Laptop scrollProgress={scrollProgress} />
             <AmbientDust />
             <ConfettiBurst active={confettiActive} />
