@@ -675,7 +675,7 @@ export default function DeploymentScene({ scrollProgress, isMobile }) {
                 toneMappingExposure: 1.25,
             }}
             shadows="soft"
-            style={{ background: '#020617' }}
+            style={{ background: '#000000' }}
         >
             <PerspectiveCamera makeDefault fov={52} near={0.05} far={80} position={[0, 0.55, 2.2]} />
 
@@ -699,7 +699,7 @@ export default function DeploymentScene({ scrollProgress, isMobile }) {
                 <Vignette eskil={false} offset={0.12} darkness={0.8} />
             </EffectComposer>
 
-            <fog attach="fog" args={['#020617', 12, 28]} />
+            <fog attach="fog" args={['#000000', 12, 28]} />
         </Canvas>
     );
 }

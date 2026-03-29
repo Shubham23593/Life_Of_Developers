@@ -15,39 +15,39 @@ const HeroScene = dynamic(() => import('@/components/canvas/HeroScene'), {
 const PHASES = [
   {
     id: '01',
-    tag: 'THE SURFACE',
-    sub: 'Confidence Level: 100% (The Tutorial Era)',
-    body: 'Just watched a 10-minute "Become a Senior Dev" video. I am a God. I can build Facebook in a weekend. My code is poetic. My variable names are perfect. Life is good.',
+    tag: 'THE BEGINNING',
+    sub: 'Curiosity Awakened.',
+    body: 'It all started with curiosity... One line of code changed everything.',
     range: [0, 0.28],
     align: 'left',
   },
   {
     id: '02',
-    tag: 'THE TWILIGHT ZONE',
-    sub: 'Reality Check: 47 Chrome Tabs Open',
-    body: 'Entered the MERN stack. Why is CSS like this? Why does "npm install" take 3 years? I spend 4 hours debugging a semicolon and 2 minutes actually writing code. Send help.',
+    tag: 'THE FIRST CODE',
+    sub: 'Hello World.',
+    body: 'Hello World… my first step into a new world. The journey begins here.',
     range: [0.25, 0.53],
     align: 'right',
   },
   {
     id: '03',
-    tag: 'THE MIDNIGHT ABYSS',
-    sub: 'The 3 AM Hallucinations',
-    body: 'Training an AI model to solve my problems, but now the AI is also depressed. I have forgotten what the sun looks like. Stack Overflow is my only family now. If it works, DON’T TOUCH IT.',
+    tag: 'THE MATR1X',
+    sub: 'Floating code lines.',
+    body: 'The laptop screen glows brighter. Floating code lines appear in 3D space as reality shifts.',
     range: [0.50, 0.78],
     align: 'left',
   },
   {
     id: '04',
-    tag: 'THE TRENCHES',
-    sub: 'Final Boss: Deployment',
-    body: 'It worked on my machine. It’s not working on the server. I am now 10% human, 90% caffeine, and 100% bugs. I have reached the bottom. Scroll to witness the final merge conflict. ↓',
+    tag: 'THE DESCENT',
+    sub: 'A new dimension.',
+    body: 'Code starts multiplying. The background becomes dynamic. Prepared to descend into the chaos of creation. ↓',
     range: [0.75, 1.00],
     align: 'center',
   },
 ];
 
-/* ─── Glassmorphism text panel ───────────────────────────────────── */
+/* ─── Glassmorphism text panel (Cyberpunk Theme) ─────────────────── */
 function PhasePanel({ phase, scrollYProgress }) {
   const [start, end] = phase.range;
   const midpoint = (start + end) / 2;
@@ -77,33 +77,34 @@ function PhasePanel({ phase, scrollYProgress }) {
       {/* Phase badge */}
       <div className="flex items-center gap-2">
         <span
-          className="text-[10px] md:text-xs font-mono tracking-[0.3em] text-cyan-400 uppercase"
-          style={{ fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}
+          className="text-[10px] md:text-xs tracking-[0.3em] text-green-400 uppercase"
+          style={{ fontFamily: "var(--font-mono)" }}
         >
           {phase.id} // {phase.tag}
         </span>
-        <div className="h-px w-8 bg-cyan-400/60" />
+        <div className="h-px w-8 bg-green-400/60" />
       </div>
 
-      {/* Glass card */}
+      {/* Glass card - Deep black with purple border */}
       <div
-        className="rounded-xl border border-white/10 px-5 py-4 md:px-6 md:py-5"
+        className="rounded-xl px-5 py-4 md:px-6 md:py-5"
         style={{
-          background: 'rgba(5, 5, 20, 0.65)',
+          background: 'rgba(0, 0, 0, 0.65)',
+          border: '1px solid rgba(22,163,74, 0.3)', // Purple edge
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
-          boxShadow: '0 0 30px rgba(0,230,255,0.08), inset 0 1px 0 rgba(255,255,255,0.06)',
+          boxShadow: '0 0 30px rgba(34,197,94, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
         }}
       >
         <h3
-          className="text-white text-lg md:text-2xl font-bold leading-tight mb-1"
-          style={{ fontFamily: "'Syne', 'Space Grotesk', sans-serif" }}
+          className="text-green-500 text-lg md:text-2xl font-bold leading-tight mb-2"
+          style={{ fontFamily: "var(--font-mono)" }}
         >
           {phase.sub}
         </h3>
         <p
-          className="text-cyan-300/70 text-xs md:text-sm font-mono tracking-wide"
-          style={{ fontFamily: "'JetBrains Mono', monospace" }}
+          className="text-green-400/70 text-xs md:text-sm tracking-wide leading-relaxed"
+          style={{ fontFamily: "var(--font-mono)" }}
         >
           {phase.body}
         </p>
@@ -112,7 +113,7 @@ function PhasePanel({ phase, scrollYProgress }) {
   );
 }
 
-/* ─── Scroll progress bar ────────────────────────────────────────── */
+/* ─── Scroll progress bar (3-Color Gradient) ─────────────────────── */
 function ScrollBar({ scrollYProgress, overlayOpacity }) {
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
   return (
@@ -121,7 +122,8 @@ function ScrollBar({ scrollYProgress, overlayOpacity }) {
       style={{
         scaleX,
         opacity: overlayOpacity,
-        background: 'linear-gradient(90deg, #00f0ff, #7b2fff)',
+        background: 'linear-gradient(90deg, #22c55e, #16a34a, #22c55e)',
+        boxShadow: '0 0 15px rgba(22,163,74, 0.8)',
       }}
     />
   );
@@ -141,14 +143,14 @@ function CornerHUD({ scrollYProgress, overlayOpacity }) {
   return (
     <motion.div
       className="fixed top-6 right-6 z-50 flex flex-col items-end gap-1 select-none pointer-events-none"
-      style={{ fontFamily: "'JetBrains Mono', monospace", opacity: overlayOpacity }}
+      style={{ fontFamily: "var(--font-mono)", opacity: overlayOpacity }}
     >
-      <span className="text-[10px] text-cyan-500/70 tracking-widest uppercase">
+      <span className="text-[10px] text-green-500/70 tracking-widest uppercase">
         Developer-Life
       </span>
-      <span className="text-xs text-white/40 font-mono">{String(pct).padStart(3, '0')}%</span>
-      <div className="h-px w-10 bg-cyan-500/30" />
-      <span className="text-[9px] text-cyan-400/50 tracking-[0.2em] uppercase">
+      <span className="text-xs text-green-500/40">{String(pct).padStart(3, '0')}%</span>
+      <div className="h-px w-10 bg-green-500/30" />
+      <span className="text-[9px] text-green-400/50 tracking-[0.2em] uppercase">
         {activePhase.id} // {activePhase.tag}
       </span>
     </motion.div>
@@ -164,13 +166,13 @@ function ScrollHint({ scrollYProgress }) {
       className="fixed bottom-10 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 pointer-events-none"
     >
       <span
-        className="text-[10px] text-white/40 tracking-[0.3em] uppercase"
-        style={{ fontFamily: "'JetBrains Mono', monospace" }}
+        className="text-[10px] text-green-500/40 tracking-[0.3em] uppercase"
+        style={{ fontFamily: "var(--font-mono)" }}
       >
         Scroll to explore
       </span>
       <motion.div
-        className="w-px h-8 bg-gradient-to-b from-cyan-400/60 to-transparent"
+        className="w-px h-8 bg-gradient-to-b from-green-400/60 to-transparent"
         animate={{ scaleY: [1, 0.3, 1], opacity: [0.6, 0.2, 0.6] }}
         transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -204,20 +206,13 @@ export default function Hero() {
     return () => window.removeEventListener('resize', check);
   }, [setIsMobile]);
 
-  /* Fade-in the whole section once loaded */
-  const heroOpacity = useTransform(
-    useMotionValue(isLoaded ? 1 : 0),
-    [0, 1],
-    [0, 1]
-  );
-
   /* Global fade-out for textual UI before lid opens */
   const overlayOpacity = useTransform(scrollYProgress, [0.8, 0.85], [1, 0]);
 
   return (
     <>
       {/* 400vh scroll driver */}
-      <div ref={containerRef} className="relative h-[400vh]">
+      <div ref={containerRef} className="relative h-[400vh] bg-black">
 
         {/* ── Pinned 3D canvas (full viewport) ── */}
         <motion.div
@@ -228,12 +223,12 @@ export default function Hero() {
         >
           <HeroScene scrollProgress={scrollMV} />
 
-          {/* Vignette overlay */}
+          {/* Heavy Vignette overlay to boost contrast */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
               background:
-                'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, rgba(0,0,0,0.7) 100%)',
+                'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 30%, rgba(0,0,0,0.85) 100%)',
             }}
           />
 
@@ -248,35 +243,39 @@ export default function Hero() {
             ))}
           </motion.div>
 
-          {/* Hero headline */}
+          {/* Hero headline (Matching the Preloader aesthetic) */}
           <motion.div
-            className="absolute top-[12%] left-1/2 -translate-x-1/2 text-center pointer-events-none w-full px-6"
+            className="absolute top-[12%] left-1/2 -translate-x-1/2 text-center pointer-events-none w-full px-6 flex flex-col items-center"
             style={{
               opacity: useTransform(scrollYProgress, [0.75, 0.82], [1, 0]),
-              scale: useTransform(scrollYProgress, [0.75, 0.85], [1, 0]),
+              scale: useTransform(scrollYProgress, [0.75, 0.85], [1, 0.9]),
             }}
           >
-
             <h1
-              className="text-4xl md:text-7xl lg:text-8xl font-black text-white leading-none tracking-tight"
-              style={{ fontFamily: "'Syne', sans-serif" }}
+              className="text-5xl md:text-8xl lg:text-[9rem] font-bold text-green-500 leading-none tracking-tighter"
+              style={{ fontFamily: "var(--font-display)", transform: "scaleX(1.3)" }}
             >
               Developer
-              <br />
-              <span
-                className="bg-clip-text text-transparent"
-                style={{
-                  backgroundImage: 'linear-gradient(135deg, #00f0ff 0%, #7b2fff 60%, #ff6b2b 100%)',
-                }}
-              >
-                Life
-              </span>
             </h1>
-            <p
-              className="mt-4 text-white/40 text-xs md:text-sm tracking-[0.2em] uppercase"
-              style={{ fontFamily: "'JetBrains Mono', monospace" }}
+            <h1
+              className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter -mt-2 md:-mt-6"
+              style={{
+                fontFamily: "var(--font-mono)",
+                transform: "scaleX(1.3)",
+                backgroundImage: 'linear-gradient(to right, #22c55e, #16a34a, #15803d)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                filter: 'drop-shadow(0 10px 30px rgba(22,163,74, 0.3))'
+              }}
             >
-              The Architect · The Grind · The Persistence
+              Life
+            </h1>
+            
+            <p
+              className="mt-8 md:mt-12 flex items-center gap-2 md:gap-3 text-green-500/40 text-[9px] md:text-xs tracking-[0.4em] uppercase"
+              style={{ fontFamily: "var(--font-mono)" }}
+            >
+              The Architect <span className="text-green-500">•</span> The Grind <span className="text-[#22c55e]">•</span> The Persistence
             </p>
           </motion.div>
 

@@ -31,9 +31,12 @@ const Hero = dynamic(() => import('@/components/sections/Hero'), {
 
 const Chapter03 = dynamic(() => import('@/components/sections/Chapter03'), {
   ssr: false,
-  loading: () => <div className="h-screen bg-[#020617]" />,
+  loading: () => <div className="h-screen bg-black" />,
 });
 
+const FinalCallToAction = dynamic(() => import('@/components/sections/FinalCallToAction'), {
+  ssr: false,
+});
 
 /* ── Page ────────────────────────────────────────────────────────── */
 export default function HomePage() {
@@ -77,6 +80,7 @@ export default function HomePage() {
         <DebuggingDescent />
         <BlueprintAssembly />
         <Chapter03 />
+        <FinalCallToAction />
 
         {/*
           ─────────────────────────────────────────────────────────

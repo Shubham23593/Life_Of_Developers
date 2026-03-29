@@ -2,59 +2,59 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Globe, User, Mail, Code2, Menu, X } from 'lucide-react';
-
-
 
 export default function Overlay({ isLoaded }) {
-  const [tick, setTick] = useState(0);
+  const [time, setTime] = useState("");
 
-  /* blinking clock */
+  /* Live clock */
   useEffect(() => {
-    const id = setInterval(() => setTick((t) => t + 1), 500);
+    const updateClock = () => {
+      const now = new Date();
+      setTime(now.toLocaleTimeString('en-US', { hour12: false }));
+    };
+    updateClock(); // Set immediately to avoid hydration flicker
+    const id = setInterval(updateClock, 1000);
     return () => clearInterval(id);
   }, []);
-
-  const time = new Date().toLocaleTimeString('en-US', {
-    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
-  });
 
   return (
     <AnimatePresence>
       {isLoaded && (
         <motion.header
-          className="fixed top-0 left-0 w-full z-50 px-6 py-4 flex items-center justify-between pointer-events-none"
+          className="fixed top-8 left-8 z-50 flex items-center justify-between pointer-events-none"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
         >
-          {/* Logo */}
-          <div className="pointer-events-auto flex items-center gap-2">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center border border-cyan-500/30"
+          {/* Logo matching the Preloader exactly */}
+          <div className="pointer-events-auto flex items-center gap-4">
+            
+            {/* The ">_" Terminal Box */}
+            <div 
+              className="w-10 h-10 rounded border border-green-500/30 flex items-center justify-center bg-cyan-950/20 text-green-400 font-mono text-sm"
               style={{
-                background: 'rgba(0,240,255,0.08)',
-                boxShadow: '0 0 12px rgba(0,240,255,0.15)',
+                boxShadow: '0 0 15px rgba(34,197,94, 0.1)',
               }}
             >
-              <Terminal size={14} className="text-cyan-400" />
+              &gt;_
             </div>
-            <div>
+            
+            {/* Text & Clock */}
+            <div className="flex flex-col">
               <span
-                className="text-white text-sm font-bold leading-none"
-                style={{ fontFamily: "'Syne', sans-serif" }}
+                className="text-green-500 text-base font-bold leading-none tracking-wide"
+                style={{ fontFamily: "var(--font-mono)" }}
               >
                 Dev.Life
               </span>
               <p
-                className="text-cyan-400/50 text-[9px] font-mono tracking-widest uppercase leading-none mt-0.5"
+                className="text-green-500 text-[10px] tracking-widest font-mono uppercase leading-none mt-1.5"
               >
-                {time}
+                {time || "00:00:00"}
               </p>
             </div>
+            
           </div>
-
-
         </motion.header>
       )}
     </AnimatePresence>

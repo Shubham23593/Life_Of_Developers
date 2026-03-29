@@ -6,9 +6,9 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const CARDS = [
-    { id: 1, title: 'The Denial Phase', body: "It worked on my machine 5 minutes ago. I haven't changed anything. The compiler is lying to me." },
-    { id: 2, title: 'The Google Rabbit Hole', body: "Searching for the error on Stack Overflow. Post found: 'Nevermind, I fixed it.' (Posted 8 years ago, 0 replies)." },
-    { id: 3, title: 'The Semicolon Savior', body: 'Spent 3 hours refactoring the entire backend. Realized I just missed a semicolon on line 42. I am a professional.' },
+    { id: 1, title: 'Errors... Everywhere.', body: "Sudden glitch. Red error messages flood the screen. The compiler is shouting. The system is breaking." },
+    { id: 2, title: 'Nothing Worked.', body: "Hours of debugging lead nowhere. The code makes no sense. The frustration builds. Doubts start creeping in." },
+    { id: 3, title: 'But I Didn\'t Stop.', body: "A deep breath. One line at a time. The errors begin to slowly fade. Chaos starts transitioning into clarity." },
 ];
 
 const ERRORS = [
@@ -81,25 +81,25 @@ export default function DebuggingDescent() {
     }, []);
 
     return (
-        <div ref={wrapperRef} className="relative w-full bg-[#020617]">
+        <div ref={wrapperRef} className="relative w-full bg-black">
             <section
                 ref={containerRef}
                 className="relative h-screen w-full overflow-hidden flex items-center"
             >
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#0f172a_0%,_#020617_100%)] pointer-events-none" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#0f172a_0%,_#000000_100%)] pointer-events-none" />
 
                 <div className="absolute top-8 left-8 md:top-12 md:left-12 z-50 pointer-events-none">
                     <div className="flex items-center gap-3">
-                        <span className="text-[10px] md:text-xs font-mono tracking-[0.4em] text-cyan-400 uppercase">
+                        <span className="text-[10px] md:text-xs font-mono tracking-[0.4em] text-green-400 uppercase">
                             PHASE // 02
                         </span>
-                        <div className="h-px w-10 bg-gradient-to-r from-cyan-500/50 to-transparent" />
+                        <div className="h-px w-10 bg-gradient-to-r from-green-500/50 to-transparent" />
                     </div>
                     <h2
-                        className="text-3xl md:text-5xl lg:text-6xl font-black text-white/95 tracking-tighter mt-3"
-                        style={{ fontFamily: "'Syne', sans-serif" }}
+                        className="text-3xl md:text-5xl lg:text-6xl font-bold text-green-500/95 tracking-tighter mt-3"
+                        style={{ fontFamily: "var(--font-mono)" }}
                     >
-                        DEBUGGING
+                        THE STRUGGLE
                     </h2>
                 </div>
 
@@ -145,18 +145,18 @@ export default function DebuggingDescent() {
                                     className="absolute inset-0 flex flex-col justify-center p-8 rounded-2xl shadow-2xl origin-top will-change-transform"
                                     style={{
                                         backgroundColor: '#090D1A',
-                                        border: '1px solid rgba(0, 240, 255, 0.2)',
+                                        border: '1px solid rgba(34,197,94, 0.2)',
                                         boxShadow: '0 -20px 40px -10px rgba(0,0,0,0.8)',
                                         zIndex: index,
                                     }}
                                 >
                                     <div className="flex items-center gap-4 mb-6">
-                                        <div className="w-10 h-10 rounded-lg bg-cyan-950 flex items-center justify-center border border-cyan-500/50 text-cyan-400 font-mono text-sm">
+                                        <div className="w-10 h-10 rounded-lg bg-cyan-950 flex items-center justify-center border border-green-500/50 text-green-400 font-mono text-sm">
                                             0{card.id}
                                         </div>
                                         <h3
-                                            className="text-white text-xl md:text-2xl font-bold tracking-tight"
-                                            style={{ fontFamily: "'Syne', sans-serif" }}
+                                            className="text-green-500 text-xl md:text-2xl font-bold tracking-tight"
+                                            style={{ fontFamily: "var(--font-mono)" }}
                                         >
                                             {card.title}
                                         </h3>

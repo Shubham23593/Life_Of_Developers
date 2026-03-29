@@ -19,32 +19,40 @@ const DeploymentScene = dynamic(() => import('@/components/canvas/Deploymentscen
 const NARRATIVE_PHASES = [
     {
         id: 'phase-floor',
-        range: [0, 0.22],
-        badge: '03 // THE GRAVEYARD SHIFT',
-        title: 'Coffee: Cold.\nCode: Hot.',
-        body: '3 AM. Another mug bites the dust. The diff is one line. The context is six months.',
+        range: [0, 0.18],
+        badge: '04 // REAL WORLD',
+        title: 'Deadlines. Clients.\nPressure.',
+        body: 'Code became my career. The stakes are much higher now.',
         align: 'left',
     },
     {
         id: 'phase-rise',
-        range: [0.28, 0.55],
-        badge: '04 // THE ASCENT',
-        title: 'One last\npush.',
-        body: 'The desk materialises. git commit -m "please work". The universe holds its breath.',
+        range: [0.22, 0.40],
+        badge: '05 // THE BURNOUT',
+        title: 'Sleepless\nnights.',
+        body: 'Endless debugging… Doubt and exhaustion… It feels like the weight of the world is on your shoulders.',
         align: 'right',
     },
     {
         id: 'phase-screen',
-        range: [0.60, 0.82],
-        badge: '05 // THE PORTAL',
-        title: 'Entering\nproduction.',
-        body: 'The screen swells. Deployment pipeline spinning. Heart rate: undefined.',
+        range: [0.45, 0.65],
+        badge: '06 // BREAKTHROUGH',
+        title: 'Then I\nrealized…',
+        body: 'Growth takes time. The struggles are just stepping stones to greatness.',
         align: 'center',
+    },
+    {
+        id: 'phase-mastery',
+        range: [0.72, 0.90],
+        badge: '07 // THE JOURNEY',
+        title: 'I became a\ndeveloper…',
+        body: 'But the journey never ends. Every new project is a new beginning. Let continuous learning lead the way.',
+        align: 'left',
     },
 ];
 
 /* ─────────────────────────────────────────────────────────────────
-   NARRATIVE PANEL
+   NARRATIVE PANEL (Glassmorphism + Cyan/Purple theme)
 ───────────────────────────────────────────────────────────────── */
 function NarrativePanel({ phase, scrollYProgress }) {
     const [start, end] = phase.range;
@@ -73,29 +81,29 @@ function NarrativePanel({ phase, scrollYProgress }) {
         >
             <div className="flex items-center gap-2">
                 <span style={{
-                    fontFamily: '"JetBrains Mono",monospace',
+                    fontFamily: 'var(--font-mono)',
                     fontSize: '10px',
-                    color: '#00ffaa',
+                    color: '#22c55e', // Cyan
                     letterSpacing: '0.28em',
                     textTransform: 'uppercase',
                 }}>
                     {phase.badge}
                 </span>
-                <div style={{ height: '1px', width: '28px', background: 'rgba(0,255,170,0.45)' }} />
+                <div style={{ height: '1px', width: '28px', background: 'rgba(34,197,94,0.45)' }} />
             </div>
 
             <div style={{
-                background: 'rgba(2,6,24,0.72)',
-                border: '1px solid rgba(0,255,170,0.12)',
+                background: 'rgba(0,0,0,0.6)',
+                border: '1px solid rgba(22,163,74,0.3)', // Deep Purple border
                 borderRadius: '10px',
                 padding: '14px 18px',
                 backdropFilter: 'blur(14px)',
-                boxShadow: '0 0 24px rgba(0,255,100,0.06), inset 0 1px 0 rgba(255,255,255,0.04)',
+                boxShadow: '0 0 30px rgba(34,197,94,0.05), inset 0 1px 0 rgba(34,197,94,0.05)',
             }}>
                 <h3 style={{
-                    fontFamily: "'Syne',sans-serif",
+                    fontFamily: "var(--font-mono)",
                     fontSize: '1.35rem',
-                    color: '#ffffff',
+                    color: '#22c55e',
                     fontWeight: 800,
                     margin: '0 0 6px',
                     lineHeight: 1.25,
@@ -104,9 +112,9 @@ function NarrativePanel({ phase, scrollYProgress }) {
                     {phase.title}
                 </h3>
                 <p style={{
-                    fontFamily: '"JetBrains Mono",monospace',
+                    fontFamily: 'var(--font-mono)',
                     fontSize: '11px',
-                    color: 'rgba(0,255,170,0.6)',
+                    color: 'rgba(34,197,94,0.7)', // Cyan text
                     margin: 0,
                     lineHeight: 1.6,
                     letterSpacing: '0.02em',
@@ -118,27 +126,25 @@ function NarrativePanel({ phase, scrollYProgress }) {
     );
 }
 
-
-
 /* ─────────────────────────────────────────────────────────────────
-   SCROLL PROGRESS BAR  — green theme for Chapter 03
+   SCROLL PROGRESS BAR — Signature Gradient
 ───────────────────────────────────────────────────────────────── */
-function GreenScrollBar({ scrollYProgress }) {
+function GradientScrollBar({ scrollYProgress }) {
     const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
     return (
         <motion.div
             className="fixed bottom-0 left-0 h-[2px] w-full origin-left z-50"
             style={{
                 scaleX,
-                background: 'linear-gradient(90deg,#00ff88,#00ffcc)',
-                boxShadow: '0 0 10px rgba(0,255,136,0.7)',
+                background: 'linear-gradient(90deg, #22c55e, #16a34a, #22c55e)',
+                boxShadow: '0 0 15px rgba(22,163,74,0.8)',
             }}
         />
     );
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   CORNER HUD
+   CORNER HUD — Cyan Minimalist
 ───────────────────────────────────────────────────────────────── */
 function CornerHUD({ scrollYProgress }) {
     const [pct, setPct] = useState(0);
@@ -152,14 +158,14 @@ function CornerHUD({ scrollYProgress }) {
             style={{ opacity: op }}
             className="fixed top-6 right-6 z-50 flex flex-col items-end gap-1 select-none pointer-events-none"
         >
-            <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: '10px', color: 'rgba(0,255,170,0.55)', letterSpacing: '0.3em', textTransform: 'uppercase' }}>
-                Chapter-03
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(34,197,94,0.55)', letterSpacing: '0.3em', textTransform: 'uppercase' }}>
+                Chapter-04
             </span>
-            <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: '12px', color: 'rgba(255,255,255,0.32)' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'rgba(34,197,94,0.4)' }}>
                 {String(pct).padStart(3, '0')}%
             </span>
-            <div style={{ height: '1px', width: '36px', background: 'rgba(0,255,170,0.22)' }} />
-            <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: '9px', color: 'rgba(0,255,170,0.42)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+            <div style={{ height: '1px', width: '36px', background: 'rgba(34,197,94,0.3)' }} />
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(34,197,94,0.5)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
                 {label}
             </span>
         </motion.div>
@@ -167,7 +173,7 @@ function CornerHUD({ scrollYProgress }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   CHAPTER 03 ENTRY BADGE  — fades in then out
+   CHAPTER ENTRY BADGE — Fades in then out
 ───────────────────────────────────────────────────────────────── */
 function EntryBadge({ scrollYProgress }) {
     const opacity = useTransform(scrollYProgress, [0, 0.05, 0.18, 0.28], [0, 1, 1, 0]);
@@ -179,26 +185,26 @@ function EntryBadge({ scrollYProgress }) {
             style={{ opacity, y }}
             className="absolute top-[10%] left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-3 pointer-events-none w-full px-6"
         >
-            <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: '9px', color: 'rgba(0,255,170,0.5)', letterSpacing: '0.5em', textTransform: 'uppercase' }}>
-                [ Chapter 03 ]
+            <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: '9px', color: 'rgba(34,197,94,0.5)', letterSpacing: '0.5em', textTransform: 'uppercase' }}>
+                [ Chapter 04 ]
             </span>
-            <h2 style={{ fontFamily: "'Syne',sans-serif", fontSize: 'clamp(2.2rem,5.5vw,4.5rem)', fontWeight: 900, color: '#fff', textAlign: 'center', lineHeight: 1, margin: 0 }}>
-                The Sleepless{' '}
-                <span style={{ background: 'linear-gradient(135deg,#00ff88,#00ffcc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 0 14px rgba(0,255,136,0.5))' }}>
-                    Deployment
+            <h2 style={{ fontFamily: "var(--font-mono)", fontSize: 'clamp(2.2rem,5.5vw,4.5rem)', fontWeight: 900, color: '#22c55e', textAlign: 'center', lineHeight: 1, margin: 0 }}>
+                The Continuous{' '}
+                <span style={{ background: 'linear-gradient(135deg,#22c55e,#16a34a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 0 14px rgba(34,197,94,0.5))' }}>
+                    Journey
                 </span>
             </h2>
-            <p style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: '11px', color: 'rgba(255,255,255,0.28)', letterSpacing: '0.22em', textTransform: 'uppercase', textAlign: 'center', margin: 0 }}>
-                From floor to production · 400vh of pure adrenaline
+            <p style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: '11px', color: 'rgba(34,197,94,0.28)', letterSpacing: '0.22em', textTransform: 'uppercase', textAlign: 'center', margin: 0 }}>
+                Growth takes time · Continuous Learning
             </p>
         </motion.div>
     );
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   CHAPTER 03 — main export
+   CHAPTER 04 — main export (Renamed logically from 03 to 04)
 ───────────────────────────────────────────────────────────────── */
-export default function Chapter03() {
+export default function Chapter04() {
     const isMobile = useHeroStore(s => s.isMobile);
 
     const containerRef = useRef(null);
@@ -215,9 +221,9 @@ export default function Chapter03() {
             {/* 400vh scroll driver */}
             <section
                 ref={containerRef}
-                id="chapter-03"
+                id="chapter-04"
                 className="relative h-[400vh]"
-                style={{ background: '#020617' }}
+                style={{ background: '#000000' }} // Pitch black background
             >
                 {/* Sticky viewport */}
                 <div className="sticky top-0 w-full h-screen overflow-hidden">
@@ -225,16 +231,16 @@ export default function Chapter03() {
                     {/* 3-D scene */}
                     <DeploymentScene scrollProgress={scrollMV} isMobile={isMobile} />
 
-                    {/* Gradient bridge from Chapter02 */}
+                    {/* Gradient bridge to blend out from the previous section */}
                     <div
-                        className="absolute inset-x-0 top-0 h-28 pointer-events-none z-20"
-                        style={{ background: 'linear-gradient(to bottom,#0a0005 0%,transparent 100%)' }}
+                        className="absolute inset-x-0 top-0 h-32 pointer-events-none z-20"
+                        style={{ background: 'linear-gradient(to bottom, #000000 0%, transparent 100%)' }}
                     />
 
-                    {/* Soft vignette — edges only */}
+                    {/* Heavy Vignette to keep the edges dark and focus on neon */}
                     <div
                         className="absolute inset-0 pointer-events-none z-10"
-                        style={{ background: 'radial-gradient(ellipse 88% 88% at 50% 48%,transparent 22%,rgba(2,6,23,0.6) 100%)' }}
+                        style={{ background: 'radial-gradient(ellipse 90% 90% at 50% 50%, transparent 30%, rgba(0,0,0,0.85) 100%)' }}
                     />
 
                     {/* Entry badge */}
@@ -249,7 +255,7 @@ export default function Chapter03() {
             </section>
 
             {/* Fixed chrome */}
-            <GreenScrollBar scrollYProgress={scrollYProgress} />
+            <GradientScrollBar scrollYProgress={scrollYProgress} />
             <CornerHUD scrollYProgress={scrollYProgress} />
         </>
     );

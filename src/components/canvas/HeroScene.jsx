@@ -25,30 +25,36 @@ export default function HeroScene({ scrollProgress }) {
         alpha: false,
         powerPreference: 'high-performance',
       }}
-      style={{ background: '#050508' }}
+      // Set to absolute black to maximize the neon contrast
+      style={{ background: '#000000' }}
     >
       {/* ── Ambient / Key Lights ── */}
-      <ambientLight intensity={0.15} color="#0a0a1a" />
+      {/* Deep, dark violet ambient baseline */}
+      <ambientLight intensity={0.15} color="#050510" />
+      
+      {/* Primary Key Light — Bright Cyan */}
       <pointLight
         position={[0, 3, 0]}
         intensity={0.6}
-        color="#00f0ff"
+        color="#22c55e"
         distance={8}
         decay={2}
       />
-      {/* Rim light from behind */}
+      
+      {/* Rim light from behind — Deep Purple */}
       <pointLight
         position={[-4, 2, -3]}
         intensity={0.4}
-        color="#7b2fff"
+        color="#16a34a"
         distance={10}
         decay={2}
       />
-      {/* Coffee-mug warm lamp */}
+      
+      {/* Desk/Accent light — Swapped from Orange to Hot Pink/Magenta */}
       <pointLight
         position={[2, 0.5, 1]}
-        intensity={0.3}
-        color="#ff6b2b"
+        intensity={0.4} // Slightly boosted intensity to balance the dark room
+        color="#22c55e"
         distance={4}
         decay={2}
       />
@@ -59,12 +65,12 @@ export default function HeroScene({ scrollProgress }) {
         depth={30}
         count={isMobile ? 800 : 2000}
         factor={2}
-        saturation={0.3}
+        saturation={0.8} // Boosted saturation so stars pick up the neon tint
         fade
         speed={0.4}
       />
 
-      {/* ── Environment (studio HDRI for reflections) ── */}
+      {/* ── Environment (studio HDRI for realistic metallic reflections) ── */}
       <Environment preset="night" />
 
       {/* ── Camera ── */}
