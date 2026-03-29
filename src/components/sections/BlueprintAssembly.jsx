@@ -3,148 +3,181 @@
 import { useRef, useLayoutEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Code2, Palette, Braces, Layers } from 'lucide-react';
-import { CoreVisualizer } from '@/components/SciFiUI';
+import { Code2, Palette, Braces, Layers, Atom, Server, Database, Box } from 'lucide-react';
 
+// Using 8 modules to populate the massive horizontal timeline
 const MODULES = [
-    { id: 'html', label: 'HTML', fromX: -200, fromY: -200, posClasses: "-top-10 -left-10 md:-top-16 md:-left-16", icon: <Code2 size={24} /> },
-    { id: 'css', label: 'CSS', fromX: 200, fromY: -200, posClasses: "-top-10 -right-10 md:-top-16 md:-right-16", icon: <Palette size={24} /> },
-    { id: 'js', label: 'JAVASCRIPT', fromX: -200, fromY: 200, posClasses: "-bottom-10 -left-10 md:-bottom-16 md:-left-16", icon: <Braces size={24} /> },
-    { id: 'fw', label: 'FRAMEWORKS', fromX: 200, fromY: 200, posClasses: "-bottom-10 -right-10 md:-bottom-16 md:-right-16", icon: <Layers size={24} /> },
+    { id: 'html', label: 'HTML5', desc: 'Architecting the DOM', icon: <Code2 size={40} />, color: 'text-orange-500', glow: 'shadow-[0_0_30px_#f97316]' },
+    { id: 'css', label: 'CSS3', desc: 'Visual Fidelity', icon: <Palette size={40} />, color: 'text-blue-400', glow: 'shadow-[0_0_30px_#60a5fa]' },
+    { id: 'js', label: 'JAVASCRIPT', desc: 'Dynamic Logic', icon: <Braces size={40} />, color: 'text-yellow-400', glow: 'shadow-[0_0_30px_#facc15]' },
+    { id: 'react', label: 'REACT.JS', desc: 'Component Systems', icon: <Atom size={40} />, color: 'text-cyan-400', glow: 'shadow-[0_0_30px_#22d3ee]' },
+    { id: 'node', label: 'NODE.JS', desc: 'Backend Engineering', icon: <Server size={40} />, color: 'text-green-500', glow: 'shadow-[0_0_30px_#22c55e]' },
+    { id: 'db', label: 'DATABASES', desc: 'State Persistence', icon: <Database size={40} />, color: 'text-emerald-400', glow: 'shadow-[0_0_30px_#34d399]' },
+    { id: 'docker', label: 'DOCKER', desc: 'Containerization', icon: <Box size={40} />, color: 'text-blue-500', glow: 'shadow-[0_0_30px_#3b82f6]' },
+    { id: 'fw', label: 'FRAMEWORKS', desc: 'Scaling the Build', icon: <Layers size={40} />, color: 'text-purple-400', glow: 'shadow-[0_0_30px_#c084fc]' },
 ];
 
 export default function BlueprintAssembly() {
     const wrapperRef = useRef(null);
     const containerRef = useRef(null);
+    const horizontalTrackRef = useRef(null);
+    
+    const uiRef = useRef(null);
     const charAreaRef = useRef(null);
-    const narrativeRef = useRef(null);
-    const coreRef = useRef(null);
-    const modulesRef = useRef([]);
+    const textRef = useRef(null);
+    const cardsRef = useRef([]);
 
     useLayoutEffect(() => {
         gsap.registerPlugin(ScrollTrigger);
 
         let ctx = gsap.context(() => {
+            if (!wrapperRef.current || !containerRef.current || !horizontalTrackRef.current) return;
+
+            // Helper to get total scrollable width of the horizontal track
+            const getScrollAmount = () => {
+                let trackWidth = horizontalTrackRef.current.scrollWidth;
+                return -(trackWidth - window.innerWidth);
+            };
+
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: wrapperRef.current,
-                    pin: true,
+                    pin: containerRef.current,
                     start: 'top top',
-                    end: '+=300%', // 3 viewport heights of scrolling
+                    end: () => `+=${getScrollAmount() * -1}`, // 1px horizontal scroll = 1px vertical scroll length
                     scrub: 1,
+                    invalidateOnRefresh: true, // Recalculates on window resize
                 },
             });
 
-            // 1. Text & Character Fade In
-            tl.fromTo(narrativeRef.current,
-                { x: -50, opacity: 0 },
-                { x: 0, opacity: 1, duration: 1 }
-            );
+            // 1. Initial Animations (Fading in the left HUD)
+            gsap.set(uiRef.current, { x: -50, opacity: 0 });
+            gsap.set(charAreaRef.current, { y: 100, opacity: 0 });
+            gsap.set(textRef.current, { x: -50, opacity: 0 });
+            gsap.set(cardsRef.current, { y: 100, opacity: 0, scale: 0.8 });
 
-            tl.fromTo(charAreaRef.current,
-                { y: 200, opacity: 0 },
-                { y: 0, opacity: 1, duration: 1, ease: "power3.out" },
-                "<0.2" // Start slightly after narrative
-            );
+            tl.to(uiRef.current, { x: 0, opacity: 1, duration: 2, ease: "power2.out" }, 0);
+            tl.to(charAreaRef.current, { y: 0, opacity: 1, duration: 2.5, ease: "power3.out" }, 0);
+            tl.to(textRef.current, { x: 0, opacity: 1, duration: 2, ease: "power2.out" }, 0.5);
 
-            // 2. Core Server Pulses In
-            tl.fromTo(coreRef.current,
-                { scale: 0, opacity: 0, rotation: -90 },
-                { scale: 1, opacity: 1, rotation: 0, duration: 1, ease: "back.out(1.5)" }
-            );
+            // 2. Fly in the massive horizontal cards simultaneously as scrub starts
+            tl.to(cardsRef.current, {
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                duration: 4,
+                stagger: 0.5,
+                ease: "back.out(1.2)"
+            }, 0);
 
-            // 3. Modules Fly In from corners
-            MODULES.forEach((mod, i) => {
-                tl.from(modulesRef.current[i],
-                    { x: mod.fromX, y: mod.fromY, opacity: 0, scale: 0.5, duration: 1, ease: "back.out(1.2)" },
-                    "-=0.6"
-                );
-            });
+            // 3. THE MAGIC: Horizontal Native Scrolling
+            tl.to(horizontalTrackRef.current, {
+                x: getScrollAmount,
+                duration: 20, // Long duration translates to the immense scroll distance
+                ease: "none"
+            }, 1);
 
-            tl.to({}, { duration: 0.5 }); // Breathing room at the end
+            // 4. Highlight climax
+            tl.to(charAreaRef.current, {
+                filter: 'drop-shadow(0 0 50px rgba(6,182,212,0.8))',
+                duration: 5,
+            }, 15);
+
+            tl.to({}, { duration: 2 }); // Pad end
 
         }, wrapperRef);
+
         return () => ctx.revert();
     }, []);
 
     return (
-        <div ref={wrapperRef} className="relative w-full bg-transparent overflow-hidden">
-            <section ref={containerRef} className="relative h-screen w-full flex flex-col md:flex-row bg-transparent">
-
-                {/* --- 1. BACKGROUND LAYER --- */}
-                <div className="absolute inset-0 pointer-events-none opacity-[0.10]"
-                    style={{
-                        backgroundImage: `linear-gradient(rgba(249,115,22, 0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(249,115,22, 0.4) 1px, transparent 1px)`,
-                        backgroundSize: '40px 40px'
-                    }}
-                />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_#000000_90%)] pointer-events-none" />
-
-                {/* --- 2. TITLE (Top Left) --- */}
-                <div className="absolute top-8 left-6 md:top-12 md:left-12 z-50 pointer-events-none">
-                    <div className="flex items-center gap-3">
-                        <span className="text-[10px] md:text-xs tracking-[0.4em] text-orange-400 uppercase font-mono">
-                            PHASE // 03
-                        </span>
-                        <div className="h-px w-10 bg-gradient-to-r from-orange-400 to-transparent" />
-                    </div>
-                    <h2
-                        className="text-3xl md:text-5xl lg:text-6xl font-bold text-orange-400/95 tracking-tighter mt-3"
-                        style={{ fontFamily: "var(--font-sans)" }}
-                    >
-                        LEARNING & GROWTH
-                    </h2>
-                </div>
-
-                {/* --- 3. LEFT SIDE: NARRATIVE & CHARACTER --- */}
-                <div className="relative w-full md:w-1/2 h-[50vh] md:h-full flex flex-col justify-end md:justify-center pt-[120px] md:pt-[200px] px-6 md:pl-12 md:pr-0 z-30">
+        <div ref={wrapperRef} className="relative w-full overflow-hidden bg-transparent">
+            {/* The Pinned Window Container */}
+            <section ref={containerRef} className="relative h-screen w-full flex items-center bg-transparent overflow-hidden">
+                
+                {/* --- 1. LEFT STATIC COLUMN (The Dashboard HUD) --- */}
+                {/* Fixed rigidly to the left side, z-index 40 so it floats OVER the horizontally scrolling cards */}
+                <div className="absolute top-0 left-0 w-full lg:w-[35%] h-full flex flex-col justify-between pt-8 md:pt-12 px-6 md:px-12 z-40 bg-gradient-to-r from-[#030305] via-[#050508]/90 to-transparent pointer-events-none">
                     
-                    {/* Text Narrative */}
-                    <div ref={narrativeRef} className="max-w-md relative z-40 will-change-transform">
-                        <p className="text-slate-400 font-mono text-sm md:text-base leading-relaxed border-l-2 border-orange-400/50 pl-6 bg-orange-500/5 py-4 rounded-r-lg backdrop-blur-sm">
+                    {/* Top HUD Title */}
+                    <div ref={uiRef}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] md:text-xs tracking-[0.4em] text-orange-400 uppercase font-mono">
+                                PHASE // 03
+                            </span>
+                            <div className="h-px w-10 md:w-20 bg-gradient-to-r from-orange-400 to-transparent" />
+                        </div>
+                        <h2
+                            className="text-4xl md:text-5xl lg:text-7xl font-bold text-orange-400/95 tracking-tighter mt-3 uppercase drop-shadow-[0_0_20px_rgba(234,88,12,0.4)]"
+                            style={{ fontFamily: "var(--font-sans)" }}
+                        >
+                            LEARNING <br className="hidden lg:block"/> & GROWTH
+                        </h2>
+                    </div>
+
+                    {/* Middle Narrative Box */}
+                    <div ref={textRef} className="w-full max-w-sm border-l-4 border-orange-500 pl-6 py-6 bg-black/40 backdrop-blur-md rounded-r-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] mt-auto mb-[5vh] pointer-events-auto">
+                        <p className="text-slate-300 font-mono text-xs md:text-sm lg:text-base leading-relaxed">
                             I started understanding… Building… breaking… learning… My ideas turned into real projects. From simple pages to complex applications.
                         </p>
                     </div>
 
-                    {/* CHARACTER ANCHOR */}
-                    <div ref={charAreaRef} className="absolute bottom-0 right-0 md:right-10 w-[60%] md:w-[70%] max-w-[250px] md:max-w-[350px] z-20 pointer-events-none flex flex-col items-center will-change-transform">
+                    {/* Bottom Floating Developer */}
+                    <div ref={charAreaRef} className="relative w-[150px] md:w-[220px] lg:w-[280px] z-30 drop-shadow-[0_20px_40px_rgba(234,88,12,0.3)] mb-[2vh]">
                         <img
                             src="/standing-dev.png"
-                            alt="Standing Developer"
-                            className="w-full h-auto object-contain drop-shadow-[0_-10px_30px_rgba(249,115,22,0.15)]"
+                            alt="Developer Growth"
+                            className="w-full h-auto object-contain filter contrast-125"
                             onError={(e) => e.target.style.display = 'none'}
                         />
-                        {/* Hover Pad (Cyan/Orange Energy Disc) */}
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[80%] h-4 bg-orange-500/20 blur-xl rounded-full" />
-                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[60%] h-[2px] bg-gradient-to-r from-transparent via-orange-300 to-transparent blur-sm rounded-full" />
+                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-[120%] h-3 bg-orange-500/30 blur-[15px] rounded-[100%]" />
                     </div>
+
                 </div>
 
-                {/* --- 4. RIGHT SIDE: THE ARCHITECTURE HUB --- */}
-                <div className="relative w-full md:w-1/2 h-[50vh] md:h-full flex items-center justify-center z-30 mt-8 md:mt-0">
-                    
-                    {/* A relative container to hold the absolute-positioned modules */}
-                    <div className="relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
-                        
-                        {/* The Core Server Node */}
-                        <div ref={coreRef} className="relative z-20 flex flex-col items-center justify-center group">
-                            <CoreVisualizer />
-                        </div>
-
-                        {/* Animated Connection Modules */}
+                {/* --- 2. THE HORIZONTAL SCROLLING TIMELINE TRACK --- */}
+                {/* Starts from the right margin, extends 500vw off-screen, and travels left perfectly via GSAP */}
+                <div className="absolute top-0 left-0 h-full w-full flex items-center z-20 pointer-events-none">
+                    <div 
+                        ref={horizontalTrackRef} 
+                        className="flex items-center pl-[20%] md:pl-[40vw] pr-[20vw] gap-8 md:gap-16 w-max pointer-events-auto shrink-0"
+                    >
                         {MODULES.map((mod, i) => (
-                            <div key={mod.id} 
-                                 ref={el => modulesRef.current[i] = el}
-                                 className={`absolute z-10 w-24 h-24 bg-transparent border border-[#ea580c]/30 rounded-xl flex flex-col items-center justify-center p-2 shadow-[0_0_15px_rgba(249,115,22,0.1)] overflow-hidden will-change-transform ${mod.posClasses}`}
+                            <div 
+                                key={mod.id}
+                                ref={el => cardsRef.current[i] = el}
+                                className="group relative shrink-0 w-[240px] md:w-[320px] lg:w-[400px] h-[360px] md:h-[450px] bg-[#050508]/80 backdrop-blur-xl border border-orange-500/20 rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-500 hover:border-orange-500/80 hover:-translate-y-4 hover:shadow-[0_30px_60px_rgba(234,88,12,0.3)] cursor-crosshair flex flex-col justify-between p-8 md:p-10"
                             >
-                                <div className="text-orange-400 mb-1 opacity-80">{mod.icon}</div>
-                                <span className="font-mono text-orange-200 text-[10px] font-bold text-center leading-tight tracking-wider">{mod.label}</span>
+                                {/* Diagonal Glare Overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                                 
-                                {/* Top highlight */}
-                                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-orange-300/50 to-transparent" />
+                                {/* Top: Icon and Circuit logic */}
+                                <div className="flex justify-between items-start w-full relative z-10">
+                                    <div className={`p-4 md:p-5 rounded-2xl bg-black/40 border border-orange-500/20 transition-all duration-500 group-hover:scale-110 group-hover:${mod.glow}`}>
+                                        <div className={`${mod.color} drop-shadow-[0_0_10px_currentColor] opacity-80 group-hover:opacity-100`}>
+                                            {mod.icon}
+                                        </div>
+                                    </div>
+                                    <div className="font-mono text-[10px] md:text-xs text-orange-500/50 uppercase tracking-widest">
+                                        PHASE_03_{String(i + 1).padStart(2, '0')}
+                                    </div>
+                                </div>
+
+                                {/* Graphic Centerpiece */}
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[1px] bg-gradient-to-r from-transparent via-orange-500/10 to-transparent -rotate-45 pointer-events-none" />
+                                
+                                {/* Bottom: Typography */}
+                                <div className="flex flex-col gap-2 relative z-10">
+                                    <div className="h-px w-12 bg-orange-500/40 group-hover:w-full group-hover:bg-orange-500 transition-all duration-700 ease-out mb-2" />
+                                    <h3 className="font-sans text-2xl md:text-3xl lg:text-4xl font-bold text-slate-100 uppercase tracking-tighter group-hover:text-white transition-colors">
+                                        {mod.label}
+                                    </h3>
+                                    <p className="font-mono text-xs md:text-sm text-slate-400 group-hover:text-orange-200/80 transition-colors">
+                                        {mod.desc}
+                                    </p>
+                                </div>
                             </div>
                         ))}
-
                     </div>
                 </div>
 

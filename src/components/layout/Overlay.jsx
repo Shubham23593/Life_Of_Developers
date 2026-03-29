@@ -21,7 +21,7 @@ export default function Overlay({ isLoaded }) {
     <AnimatePresence>
       {isLoaded && (
         <motion.header
-          className="fixed top-8 left-8 z-50 flex items-center justify-between pointer-events-none"
+          className="absolute top-8 left-8 z-50 flex items-center justify-between pointer-events-none"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}

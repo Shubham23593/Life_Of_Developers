@@ -21,10 +21,6 @@ const Preloader = dynamic(() => import('@/components/layout/Preloader'), {
   ssr: false,
 });
 
-const Overlay = dynamic(() => import('@/components/layout/Overlay'), {
-  ssr: false,
-});
-
 const Hero = dynamic(() => import('@/components/sections/Hero'), {
   ssr: false,
   loading: () => <div className="h-[400vh] bg-[#050508]" />,
@@ -53,9 +49,6 @@ export default function HomePage() {
 
       {/* ── Global Preloader (Data Stream concept, z-100) ── */}
       <Preloader />
-
-      {/* ── Persistent Nav / HUD (visible post-load) ── */}
-      <Overlay isLoaded={isLoaded} />
 
       {/* ── Narrative Sections ── */}
       <main className="relative">
