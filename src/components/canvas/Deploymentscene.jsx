@@ -12,13 +12,22 @@ import * as THREE from 'three';
    Defines the dolly-in path from floor → desk → screen portal.
    Each entry: [scrollT, posX, posY, posZ, lookX, lookY, lookZ]
    ══════════════════════════════════════════════════════════════════ */
-const CAM_PATH = [
-    [0.00, 0, 0.55, 2.2, 0, 0.3, 0],  // Floor — coffee puddle view
+const DESKTOP_PATH = [
+    [0.00, 0, 0.55, 2.2, 0, 0.3, 0],  // Floor
     [0.20, 0, 0.55, 2.2, 0, 0.3, 0],  // Hold at floor
-    [0.45, 0, 2.6, 3.8, 0, 2.2, 0],  // Rising — desk comes into view
-    [0.68, 0, 2.55, 2.0, 0, 2.35, -0.2],  // Front of desk, slight down-look
-    [0.82, 0, 2.48, 1.0, 0, 2.42, -0.48],  // Moving into screen
-    [1.00, 0, 2.51, 0.28, 0, 2.49, -0.48],  // Server screen perfectly framed
+    [0.45, 0, 2.6, 3.8, 0, 2.2, 0],  // Rising
+    [0.68, 0, 2.55, 2.0, 0, 2.35, -0.2],  // Centered approach
+    [0.82, 0, 2.52, 1.2, 0, 2.42, -0.48],  // Framed centered above cards
+    [1.00, 0, 2.7, 0.3, 0, 2.49, -0.48],  // Final tight crop
+];
+
+const MOBILE_PATH = [
+    [0.00, 0, 0.55, 2.2, 0, 0.3, 0],
+    [0.20, 0, 0.55, 2.2, 0, 0.3, 0],
+    [0.45, 0, 2.6, 3.8, 0, 2.2, 0],
+    [0.68, 0, 2.55, 2.0, 0, 2.35, -0.2],
+    [0.82, 0, 2.65, 1.4, 0, 2.0, -0.48],  // Look drastically lower so laptop goes UP
+    [1.00, 0, 2.8, 0.8, 0, 1.8, -0.48],   // Look even lower on final frame to clear bottom UI completely
 ];
 
 function lerpKeyframe(frames, t) {
@@ -37,9 +46,11 @@ function lerpKeyframe(frames, t) {
 /* ══════════════════════════════════════════════════════════════════
    SPILLED COFFEE PUDDLE  — wet, glossy, dark brown
    ══════════════════════════════════════════════════════════════════ */
-function CoffeePuddle() {
+function CoffeePuddle({ isMobile }) {
+    const xOffset = isMobile ? 0.15 : 1.25;
+    
     return (
-        <group position={[0.15, 0.001, 0.3]}>
+        <group position={[xOffset, 0.001, 0.3]} scale={2.5}>
             {/* Main puddle shape — custom irregular blob via scale */}
             <mesh rotation={[-Math.PI / 2, 0, 0.3]}>
                 <circleGeometry args={[0.38, 48]} />
@@ -70,10 +81,12 @@ function CoffeePuddle() {
 /* ══════════════════════════════════════════════════════════════════
    SPLIT COFFEE MUG  — tilted, broken, dramatic
    ══════════════════════════════════════════════════════════════════ */
-function SplitCoffeeMug() {
+function SplitCoffeeMug({ isMobile }) {
+    const xOffset = isMobile ? 0.15 : 1.25;
+    
     return (
         <>
-            <group position={[0.15, 0.12, 0.3]} rotation={[0.5, 0.4, 1.35]}>
+            <group position={[xOffset, 0.28, 0.3]} rotation={[0.5, 0.4, 1.35]} scale={2.5}>
                 {/* Main cylinder body */}
                 <mesh castShadow>
                     <cylinderGeometry args={[0.095, 0.082, 0.21, 32]} />
@@ -112,7 +125,7 @@ function SplitCoffeeMug() {
                 </mesh>
             </group>
             {/* Shards on the floor nearby */}
-            <group position={[0.15, 0.005, 0.3]}>
+            <group position={[xOffset, 0.01, 0.3]} scale={2.5}>
                 <mesh position={[-0.1, 0, 0.15]} rotation={[0.4, 0.1, 0]} castShadow>
                     <boxGeometry args={[0.03, 0.005, 0.02]} />
                     <meshPhysicalMaterial color="#f0f0f5" roughness={0.1} clearcoat={1.0} />
@@ -182,13 +195,13 @@ function Desk() {
    phase 3: success reveal
    ══════════════════════════════════════════════════════════════════ */
 const DEPLOY_LINES = [
-    { text: '> sudo deploy --final --env=production', delay: 0, color: '#00ffaa' },
-    { text: '> Optimizing assets...', delay: 800, color: '#88ffcc' },
-    { text: '> Bundle size: 142kb ✓', delay: 1600, color: '#88ffcc' },
-    { text: '> Uploading to production...', delay: 2400, color: '#88ffcc' },
-    { text: '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  100%', delay: 3200, color: '#00ffaa' },
-    { text: '> Flushing CDN cache... Done.', delay: 4000, color: '#88ffcc' },
-    { text: '> Health check... ✓ All systems nominal.', delay: 4800, color: '#88ffcc' },
+    { text: '> sudo deploy --final --env=production', delay: 0, color: '#ff8800' },
+    { text: '> Optimizing assets...', delay: 800, color: '#ffcc88' },
+    { text: '> Bundle size: 142kb ✓', delay: 1600, color: '#ffcc88' },
+    { text: '> Uploading to production...', delay: 2400, color: '#ffcc88' },
+    { text: '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  100%', delay: 3200, color: '#ff8800' },
+    { text: '> Flushing CDN cache... Done.', delay: 4000, color: '#ffcc88' },
+    { text: '> Health check... ✓ All systems nominal.', delay: 4800, color: '#ffcc88' },
 ];
 
 function ScreenContent({ visible }) {
@@ -237,38 +250,38 @@ function ScreenContent({ visible }) {
 
     return (
         <div style={{
-            width: '480px',
-            height: '300px',
-            background: '#010a06',
-            border: '1.5px solid rgba(0,255,120,0.3)',
+            width: '850px',
+            height: '530px',
+            background: '#0a0401', // Dark orange/brown tint
+            border: '1.5px solid rgba(255,136,0,0.3)',
             borderRadius: '4px',
             overflow: 'hidden',
             display: 'flex',
             flexDirection: 'column',
             fontFamily: '"JetBrains Mono","Fira Code","Courier New",monospace',
             position: 'relative',
-            boxShadow: 'inset 0 0 40px rgba(0,255,100,0.06)',
+            boxShadow: 'inset 0 0 40px rgba(255,136,0,0.06)',
         }}>
 
             {/* Title bar */}
             <div style={{
-                height: '26px', background: '#020e08',
-                borderBottom: '1px solid rgba(0,255,120,0.18)',
-                display: 'flex', alignItems: 'center', padding: '0 12px', gap: '6px', flexShrink: 0,
+                height: '40px', background: '#0a0401',
+                borderBottom: '1px solid rgba(255,136,0,0.18)',
+                display: 'flex', alignItems: 'center', padding: '0 16px', gap: '8px', flexShrink: 0,
             }}>
                 {['#ff5f57', '#febc2e', '#28c840'].map((c, i) => (
-                    <span key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: c, opacity: 0.8 }} />
+                    <span key={i} style={{ width: '12px', height: '12px', borderRadius: '50%', background: c, opacity: 0.8 }} />
                 ))}
-                <span style={{ marginLeft: 'auto', fontSize: '9px', color: 'rgba(0,255,120,0.4)', letterSpacing: '0.12em' }}>
+                <span style={{ marginLeft: 'auto', fontSize: '13px', color: 'rgba(255,136,0,0.4)', letterSpacing: '0.12em' }}>
                     deploy@production — bash
                 </span>
             </div>
 
             {/* Terminal body */}
-            <div style={{ flex: 1, padding: '10px 14px', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+            <div style={{ flex: 1, padding: '16px 20px', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: '6px' }}>
 
                 {!visible && (
-                    <p style={{ fontSize: '10px', color: 'rgba(0,255,120,0.25)', margin: 0 }}>
+                    <p style={{ fontSize: '15px', color: 'rgba(255,136,0,0.25)', margin: 0 }}>
                         Awaiting deployment...
                     </p>
                 )}
@@ -276,9 +289,9 @@ function ScreenContent({ visible }) {
                 {/* Completed lines */}
                 {visibleLines.map((line, i) => (
                     <p key={i} style={{
-                        margin: 0, fontSize: '10px',
+                        margin: 0, fontSize: '15px',
                         color: line.color,
-                        lineHeight: 1.5,
+                        lineHeight: 1.6,
                         animation: 'lineIn 0.3s ease',
                         letterSpacing: '0.02em',
                         fontWeight: i === 4 ? 700 : 400,
@@ -289,15 +302,15 @@ function ScreenContent({ visible }) {
 
                 {/* Currently typing line */}
                 {typingLine && (
-                    <p style={{ margin: 0, fontSize: '10px', color: '#00ffaa', lineHeight: 1.5 }}>
+                    <p style={{ margin: 0, fontSize: '15px', color: '#ff8800', lineHeight: 1.6 }}>
                         {typingLine}
-                        <span style={{ opacity: cursor ? 1 : 0, marginLeft: '1px' }}>▋</span>
+                        <span style={{ opacity: cursor ? 1 : 0, marginLeft: '2px' }}>▋</span>
                     </p>
                 )}
 
                 {/* Idle cursor */}
                 {visibleLines.length === 0 && !typingLine && visible && (
-                    <span style={{ fontSize: '10px', color: '#00ffaa', opacity: cursor ? 1 : 0 }}>▋</span>
+                    <span style={{ fontSize: '15px', color: '#ff8800', opacity: cursor ? 1 : 0 }}>▋</span>
                 )}
 
                 {/* SUCCESS REVEAL */}
@@ -305,7 +318,7 @@ function ScreenContent({ visible }) {
                     <div style={{
                         position: 'absolute',
                         inset: 0,
-                        background: 'rgba(1,10,6,0.92)',
+                        background: 'rgba(10,4,1,0.92)',
                         backdropFilter: 'blur(4px)',
                         display: 'flex',
                         flexDirection: 'column',
@@ -315,29 +328,29 @@ function ScreenContent({ visible }) {
                         zIndex: 20,
                     }}>
                         <p style={{
-                            fontSize: '42px',
+                            fontSize: '68px',
                             fontWeight: 900,
-                            color: '#00ff88',
+                            color: '#ff8800',
                             margin: 0,
                             letterSpacing: '0.05em',
-                            textShadow: '0 0 20px #00ff88, 0 0 50px #00ff44',
+                            textShadow: '0 0 20px #ff8800, 0 0 50px #ff4400',
                             lineHeight: 1.1,
                         }}>
                             DEPLOYED
                         </p>
                         <p style={{
-                            fontSize: '28px',
+                            fontSize: '42px',
                             fontWeight: 700,
-                            color: '#00ffaa',
-                            margin: '4px 0 0',
+                            color: '#ffaa00',
+                            margin: '8px 0 0',
                             letterSpacing: '0.15em',
-                            textShadow: '0 0 15px #00ffaa',
+                            textShadow: '0 0 15px #ffaa00',
                         }}>
                             SUCCESSFULLY
                         </p>
                         <p style={{
-                            fontSize: '11px',
-                            color: 'rgba(0,255,150,0.6)',
+                            fontSize: '15px',
+                            color: 'rgba(255,170,0,0.6)',
                             margin: '20px 0 0',
                             letterSpacing: '0.3em',
                             textTransform: 'uppercase',
@@ -360,7 +373,7 @@ function ScreenContent({ visible }) {
         @keyframes lineIn { from{opacity:0;transform:translateX(-4px)} to{opacity:1;transform:translateX(0)} }
         @keyframes successPulse {
           0%,100%{ filter: brightness(1); }
-          50%{ filter: brightness(1.35) drop-shadow(0 0 12px #00ff88); }
+          50%{ filter: brightness(1.35) drop-shadow(0 0 12px #ff8800); }
         }
         @keyframes successReveal {
           0% { opacity: 0; transform: scale(0.95); }
@@ -415,7 +428,7 @@ function Laptop({ scrollProgress }) {
             {[-0.18, -0.04, 0.1, 0.21].map((z, i) => (
                 <mesh key={i} position={[0, 0.019, z]}>
                     <boxGeometry args={[1.05, 0.002, 0.022]} />
-                    <meshStandardMaterial color="#00ffaa" emissive="#00ffaa" emissiveIntensity={0.4} />
+                    <meshStandardMaterial color="#ffaa00" emissive="#ffaa00" emissiveIntensity={0.4} />
                 </mesh>
             ))}
             {/* Hinge */}
@@ -441,8 +454,8 @@ function Laptop({ scrollProgress }) {
                     <mesh ref={screenRef} position={[0, -0.01, 0]}>
                         <boxGeometry args={[1.08, 0.004, 0.66]} />
                         <meshStandardMaterial
-                            color="#010a04"
-                            emissive="#00ff88"
+                            color="#0a0401"
+                            emissive="#ffcc44"
                             emissiveIntensity={0}
                             roughness={0.8}
                             metalness={0.04}
@@ -454,15 +467,16 @@ function Laptop({ scrollProgress }) {
                             position={[0, -0.004, 0]}
                             rotation={[Math.PI / 2, 0, 0]}
                             style={{ pointerEvents: 'none' }}
+                            center
                         >
                             <ScreenContent visible={screenVisible} />
                         </Html>
                     </mesh>
-                    {/* Green screen glow */}
+                    {/* Orange screen glow */}
                     <pointLight
                         ref={screenGlowRef}
                         position={[0, -0.2, 0.08]}
-                        color="#00ff88"
+                        color="#ff8800"
                         intensity={0}
                         distance={4}
                         decay={1.8}
@@ -590,7 +604,7 @@ function BackWall() {
    Reads scrollProgress every frame, lerps camera to target keyframe.
    Entirely imperative — zero React state, zero re-renders.
    ══════════════════════════════════════════════════════════════════ */
-function CameraController({ scrollProgress }) {
+function CameraController({ scrollProgress, isMobile }) {
     const { camera } = useThree();
 
     const currentPos = useMemo(() => new THREE.Vector3(0, 0.55, 2.2), []);
@@ -600,7 +614,7 @@ function CameraController({ scrollProgress }) {
 
     useFrame((_, delta) => {
         const t = Math.max(0, Math.min(1, scrollProgress.get()));
-        const kf = lerpKeyframe(CAM_PATH, t);
+        const kf = lerpKeyframe(isMobile ? MOBILE_PATH : DESKTOP_PATH, t);
 
         tmpPos.set(kf[1], kf[2], kf[3]);
         tmpTarget.set(kf[4], kf[5], kf[6]);
@@ -620,7 +634,7 @@ function CameraController({ scrollProgress }) {
 /* ══════════════════════════════════════════════════════════════════
    SCENE ROOT
    ══════════════════════════════════════════════════════════════════ */
-function Scene({ scrollProgress }) {
+function Scene({ scrollProgress, isMobile }) {
     const [confettiActive, setConfettiActive] = useState(false);
     const confettiRef = useRef(false);
 
@@ -638,7 +652,7 @@ function Scene({ scrollProgress }) {
 
     return (
         <>
-            <CameraController scrollProgress={scrollProgress} />
+            <CameraController scrollProgress={scrollProgress} isMobile={isMobile} />
 
             {/* Lighting */}
             <ambientLight intensity={0.08} color="#060820" />
@@ -647,12 +661,9 @@ function Scene({ scrollProgress }) {
 
             <Environment preset="night" />
 
-            {/* Scene geometry */}
-            <Floor />
-            <BackWall />
-            <CoffeePuddle />
-            <SplitCoffeeMug />
-            <Desk />
+            {/* Scene geometry (Void space) */}
+            <CoffeePuddle isMobile={isMobile} />
+            <SplitCoffeeMug isMobile={isMobile} />
             <Laptop scrollProgress={scrollProgress} />
             <AmbientDust />
             <ConfettiBurst active={confettiActive} />
@@ -680,7 +691,7 @@ export default function DeploymentScene({ scrollProgress, isMobile }) {
             <PerspectiveCamera makeDefault fov={52} near={0.05} far={80} position={[0, 0.55, 2.2]} />
 
             <Suspense fallback={null}>
-                <Scene scrollProgress={scrollProgress} />
+                <Scene scrollProgress={scrollProgress} isMobile={isMobile} />
             </Suspense>
 
             {/* Post-processing — disable multisampling for huge performance gain */}

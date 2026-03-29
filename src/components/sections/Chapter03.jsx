@@ -6,236 +6,234 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useMotionValue } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useHeroStore } from '@/store/heroStore';
-import { Briefcase, Flame, Lightbulb, Rocket } from 'lucide-react';
+import { Briefcase, Flame, Lightbulb, Rocket, ChevronRight, Terminal, Cpu, Network } from 'lucide-react';
 
 const DeploymentScene = dynamic(() => import('@/components/canvas/Deploymentscene'), {
     ssr: false,
-    loading: () => null,
+    loading: () => <div className="absolute inset-0 bg-[#030305]" />,
 });
 
 const NARRATIVE_PHASES = [
     {
         id: 'phase-floor',
-        badge: '04 // REAL WORLD',
+        num: '04',
+        badge: 'REAL WORLD',
         title: 'Deadlines & Pressure',
-        body: 'Code became my career. The stakes are much higher now. Every bug directly impacts production.',
-        icon: <Briefcase size={24} />,
-        accent: 'from-blue-500 to-indigo-500',
-        glow: 'shadow-[0_0_30px_#3b82f6]',
-        textColor: 'text-blue-400'
+        body: 'Code became my career. The stakes are much higher now. Every bug directly impacts production, and every commit is scrutinized.',
+        icon: <Briefcase size={32} strokeWidth={1.5} />,
+        accent: 'from-orange-600 to-amber-600',
+        glow: 'shadow-[0_0_50px_rgba(249,115,22,0.3)]',
+        textColor: 'text-orange-400',
+        borderColor: 'border-orange-500/30'
     },
     {
         id: 'phase-rise',
-        badge: '05 // THE BURNOUT',
+        num: '05',
+        badge: 'THE BURNOUT',
         title: 'Sleepless Nights',
-        body: 'Endless debugging. Doubt and exhaustion setting in. It feels like the weight of the server is on your shoulders.',
-        icon: <Flame size={24} />,
-        accent: 'from-red-500 to-orange-500',
-        glow: 'shadow-[0_0_30px_#ef4444]',
-        textColor: 'text-red-400'
+        body: 'Endless debugging. Doubt and exhaustion setting in. It feels like the weight of the entire server is resting solely on your shoulders.',
+        icon: <Flame size={32} strokeWidth={1.5} />,
+        accent: 'from-red-600 to-orange-500',
+        glow: 'shadow-[0_0_50px_rgba(239,68,68,0.3)]',
+        textColor: 'text-red-400',
+        borderColor: 'border-red-500/30'
     },
     {
         id: 'phase-screen',
-        badge: '06 // BREAKTHROUGH',
+        num: '06',
+        badge: 'BREAKTHROUGH',
         title: 'The Realization',
-        body: 'Growth takes time. The struggles are not failures, they are the stepping stones to total system mastery.',
-        icon: <Lightbulb size={24} />,
-        accent: 'from-cyan-400 to-emerald-400',
-        glow: 'shadow-[0_0_30px_#22d3ee]',
-        textColor: 'text-cyan-400'
+        body: 'Growth takes time. The struggles are not failures, they are the vital stepping stones to total system mastery and architectural elegance.',
+        icon: <Lightbulb size={32} strokeWidth={1.5} />,
+        accent: 'from-amber-500 to-yellow-400',
+        glow: 'shadow-[0_0_50px_rgba(251,191,36,0.3)]',
+        textColor: 'text-amber-400',
+        borderColor: 'border-amber-500/30'
     },
     {
         id: 'phase-mastery',
-        badge: '07 // MASTERY',
-        title: 'Deployment',
-        body: 'I became a developer... But the journey never ends. The pipeline is automated. The code is Poetry.',
-        icon: <Rocket size={24} />,
-        accent: 'from-orange-500 to-yellow-400',
-        glow: 'shadow-[0_0_30px_#f97316]',
-        textColor: 'text-orange-400'
+        num: '07',
+        badge: 'MASTERY',
+        title: 'Deployment Ready',
+        body: 'I became a developer. But the journey never truly ends. The pipeline is automated. The infrastructure is solid. The code is Poetry.',
+        icon: <Rocket size={32} strokeWidth={1.5} />,
+        accent: 'from-orange-500 to-amber-300',
+        glow: 'shadow-[0_0_50px_rgba(249,115,22,0.4)]',
+        textColor: 'text-orange-400',
+        borderColor: 'border-orange-500/40'
     },
 ];
 
-export default function Chapter04() {
+export default function Chapter03() {
     const isMobile = useHeroStore(s => s.isMobile);
-
-    const wrapperRef = useRef(null);
     const containerRef = useRef(null);
-    const wheelRef = useRef(null);
-    const cardsRef = useRef([]);
+    const contentRef = useRef(null);
     const titleRef = useRef(null);
-
-    // Provide a motion value for the 3D scene background to interpret scroll progress natively
+    const subtitleRef = useRef(null);
+    const cardsRef = useRef([]);
+    const progressRef = useRef(null);
+    
+    // Provide a motion value for the 3D scene background to interpret scroll natively
     const scrollMV = useMotionValue(0);
 
     useLayoutEffect(() => {
         gsap.registerPlugin(ScrollTrigger);
 
         let ctx = gsap.context(() => {
-            if (!wrapperRef.current || !wheelRef.current) return;
+            if (!containerRef.current || cardsRef.current.length === 0) return;
 
-            // Massive Orbital GSAP Timeline (400vh bound)
+            // Use the same GSAP sequence logic as Hero.jsx without fixed pins
             const tl = gsap.timeline({
                 scrollTrigger: {
-                    trigger: wrapperRef.current,
+                    trigger: containerRef.current,
                     start: 'top top',
                     end: 'bottom bottom',
-                    scrub: 1, // Flawless continuous tracking
+                    scrub: 1,
                     onUpdate: (self) => {
-                        // Pass math to the 3D scene
+                        // Native motion value binding for 3D Camera Path
                         scrollMV.set(self.progress);
+                        // Update bottom progress bar natively
+                        if (progressRef.current) {
+                            gsap.set(progressRef.current, { scaleX: self.progress });
+                        }
                     }
-                },
+                }
             });
 
-            // 1. Initial fade-in of the orbital structure
-            gsap.set(wheelRef.current, { opacity: 0, scale: 0.8, y: 100 });
-            gsap.set(titleRef.current, { opacity: 0, y: -50 });
+            // Initial states for horizontal bottom deck (Starts far below and slightly detached toward camera)
+            gsap.set(cardsRef.current, { opacity: 0, y: 200, z: 200, rotationX: -45, transformPerspective: 1000 });
 
-            tl.to(wheelRef.current, { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0);
-            tl.to(titleRef.current, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0);
+            // 1. Zoom out and fade the massive title elegantly
+            tl.to([titleRef.current], { 
+                scale: 1.15, 
+                opacity: 0, 
+                filter: 'blur(15px)', 
+                duration: 2, 
+                ease: 'power2.inOut' 
+            }, 0);
 
-            // 2. The Great Orbital Rotation (Math is beautiful)
-            // 4 Cards separated by 40 degrees. Total rotation needed to bring the last card to Top-Center is -120 degrees.
-            const totalDegrees = 120; // 3 gaps * 40 = 120
+            // 2. Sequential "Apple Card Deck" Timeline
+            let time = 2; // start after title fades
+            const dur = 1.5; // push/pull time
+            const hold = 3.5; // read time
+
+            NARRATIVE_PHASES.forEach((phase, i) => {
+                // Flip UP organically from below the screen with satisfying optical bounce
+                tl.to(cardsRef.current[i], {
+                    opacity: 1,
+                    y: 0,
+                    z: 0,
+                    rotationX: 0,
+                    duration: dur,
+                    ease: 'expo.out'
+                }, time);
+
+                time += hold;
+
+                // Send BACK deeply into the void organically, optical blurring creating true focal depth
+                if (i !== NARRATIVE_PHASES.length - 1) {
+                    tl.to(cardsRef.current[i], {
+                        opacity: 0,
+                        z: -500,      // Pushes physically backward, into screen
+                        y: -30,       // Slight upward natural drift
+                        rotationX: 20, // Tilted slightly upwards like dropping a card backwards
+                        filter: 'blur(20px)', // True optic focus drop
+                        duration: dur,
+                        ease: 'power2.inOut'
+                    }, time);
+                    time += dur * 0.4; // Slightly overlap the next card coming in for fluidity
+                }
+            });
+
+            // Fade out the entire scene right before the scroll completes
+            tl.to(contentRef.current, { opacity: 0, scale: 0.95, duration: 2, ease: 'power2.inOut' });
             
-            // Spin the master wheel Left
-            tl.to(wheelRef.current, { 
-                rotation: -totalDegrees, 
-                duration: 4, 
-                ease: "none" 
-            }, 0.5); // Start spinning after the fade-in
-
-            // Counter-spin ALL cards mathematically to exactly offset the wheel, keeping the text upright!
-            cardsRef.current.forEach((card) => {
-                tl.to(card, { 
-                    rotation: `+=${totalDegrees}`, // whatever its current start rotation is, add 120!
-                    duration: 4, 
-                    ease: "none" 
-                }, 0.5);
-            });
-
-            // 3. Highlight states based on top-dead-center proximity
-            // Provide a pulse to the card that is currently hovering near the center
-            const stepDur = 4 / 3; // 4 duration divided by 3 transitions
-            let t = 0.5; // start time aligned with rotation start
-            
-            cardsRef.current.forEach((card, i) => {
-                // Dim all initially except the first
-                if (i !== 0) gsap.set(card, { opacity: 0.3, filter: 'grayscale(100%) blur(5px)', scale: 0.8 });
-                
-                // When this card reaches the top dead center (time = 0.5 + i * stepDur)
-                tl.to(card, { 
-                    opacity: 1, 
-                    filter: 'grayscale(0%) blur(0px)', 
-                    scale: 1.1, 
-                    duration: 0.5, 
-                    ease: 'power2.out',
-                    yoyo: true,  // It dims again as it leaves the top!
-                    repeat: i === 3 ? 0 : 1 // The final card stays highlighted!
-                }, t);
-
-                t += stepDur;
-            });
-
-        }, wrapperRef);
+        }, containerRef);
 
         return () => ctx.revert();
-    }, [scrollMV]);
-
-    // Orbital Math Layout configuration
-    // Determine the literal CSS radius size of the orbital wheel based on responsive assumptions
-    const wheelSizeStyle = "w-[1200px] h-[1200px] md:w-[1500px] md:h-[1500px]";
-    const radiusOffset = "translateY(-550px) md:translateY(-700px)"; // The distance from center to the perimeter
-    const angleStep = 40; // Degrees between each card on the orbital arc
+    }, [isMobile, scrollMV]);
 
     return (
-        /* Structural safe boundary: 400vh */
-        <div ref={wrapperRef} className="relative w-full h-[400vh] bg-[#000000]">
+        <section className="relative w-full bg-[#020202] text-white">
             
-            <div className="sticky top-0 w-full h-screen overflow-hidden bg-[#030305] flex items-center justify-center">
+            {/* The absolute structural boundary: 400vh tall wrapper for native sticky scrolling */}
+            <div ref={containerRef} className="relative w-full h-[400vh] bg-transparent">
                 
-                {/* 1. The 3D Deployment Scene safely underneath the Orbital UI */}
-                <div className="absolute inset-0 z-0 opacity-80 mix-blend-screen pointer-events-none">
-                     <DeploymentScene scrollProgress={scrollMV} isMobile={isMobile} />
-                </div>
+                {/* The Sticky Fullscreen Lens */}
+                <div className="sticky top-0 w-full h-screen overflow-hidden bg-[#020202] z-10 pointer-events-auto">
+                    
+                    <div ref={contentRef} className="w-full h-full relative">
+                    
+                    {/* 1. Underlying 3D Canvas Context */}
+                    <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(3,3,5,0.7)_100%)] mix-blend-screen pointer-events-none">
+                        <DeploymentScene scrollProgress={scrollMV} isMobile={isMobile} />
+                    </div>
+                    
+                    {/* Ambient Glow */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vh] bg-orange-500/10 blur-[150px] rounded-full mix-blend-screen pointer-events-none z-0" />
 
-                {/* Ambient Depth Gradients */}
-                <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black to-transparent z-10 pointer-events-none" />
+                    {/* 2. FOREGROUND A: Massive Cinematic Typography */}
+                    <div className="absolute top-[8%] md:top-[10%] left-0 w-full flex flex-col items-center justify-start z-20 pointer-events-none px-4">
+                        <h2 ref={titleRef} className="text-[14vw] sm:text-[12vw] md:text-[8vw] lg:text-[7vw] font-black uppercase tracking-tighter drop-shadow-2xl text-center leading-[0.85] w-full mix-blend-plus-lighter">
+                            The Arc of <br className="md:hidden" /><span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-500 drop-shadow-[0_0_20px_rgba(249,115,22,0.3)]">Progress</span>
+                        </h2>
+                    </div>
 
-                {/* 2. Top Title Overlay */}
-                <div ref={titleRef} className="absolute top-[8vh] flex flex-col items-center z-40 text-center pointer-events-none">
-                     <span className="font-mono text-xs text-orange-400 tracking-[0.5em] uppercase mb-2">DEPLOYMENT PROTOCOL</span>
-                     <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mix-blend-plus-lighter">
-                         The Continuous <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-300">Journey</span>
-                     </h2>
-                </div>
-
-                {/* 3. THE GSAP ORBITAL RING ENGINE */}
-                {/* The wheel is anchored far below the screen so only the top half arc is visible tracking across the viewport */}
-                <div 
-                    className={`absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[55%] md:translate-y-[60%] rounded-full ${wheelSizeStyle} z-20 pointer-events-none`}
-                >
-                    {/* The Structural Wheel Lines which physically rotate */}
-                    <div ref={wheelRef} className="absolute inset-0 rounded-full border border-orange-500/20 shadow-[0_0_100px_rgba(249,115,22,0.05)] border-dashed">
-                        
-                        <div className="absolute inset-4 rounded-full border border-orange-400/10" />
-                        <div className="absolute inset-10 rounded-full border-2 border-orange-400/5 border-dotted" />
-
-                        {/* The Holographic Cards mounted precisely on the exact Mathematical Architecure of the Wheel */}
+                    {/* 3. FOREGROUND B: Floating Narrative Tech Cards (Bottom pinned) */}
+                    <div className="absolute bottom-12 md:bottom-20 inset-x-0 mx-auto z-30 flex justify-center px-4 md:px-8 w-full perspective-1000 md:h-[220px]">
                         {NARRATIVE_PHASES.map((phase, i) => (
-                            <div 
+                            <div
                                 key={phase.id}
-                                className="absolute top-1/2 left-1/2 w-0 h-0"
-                                style={{ transform: `rotate(${i * angleStep}deg)` }} // Spaced geometrically around the core
+                                ref={(el) => (cardsRef.current[i] = el)}
+                                className={`absolute bottom-0 w-[calc(100%-2rem)] md:w-full max-w-lg md:max-w-4xl bg-[#08080c]/85 backdrop-blur-2xl border ${phase.borderColor} rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] opacity-0 transform-style-3d pointer-events-auto ${phase.glow} overflow-hidden flex flex-col md:flex-row gap-4 md:gap-6`}
                             >
-                                {/* Offset exactly to the rim of the 1200px wheel */}
-                                <div className={`absolute ${radiusOffset} -translate-x-1/2`}>
-                                    
-                                    {/* The GSAP Counter-Rotation Wrapper maintaining Text Gravity */}
-                                    <div 
-                                        ref={el => cardsRef.current[i] = el}
-                                        style={{ transform: `rotate(${-i * angleStep}deg)` }} // Initializes perfectly upright
-                                        className="pointer-events-auto"
-                                    >
-                                        
-                                        {/* THE ACTUAL NARRATIVE CARD */}
-                                        <div className={`w-[280px] md:w-[400px] p-6 md:p-8 bg-[#0a0a0f]/90 backdrop-blur-2xl border border-white/10 rounded-3xl ${phase.glow} transition-all duration-300 transform-style-3d`}>
-                                            
-                                            {/* Glowing Top Injection Line */}
-                                            <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${phase.accent} rounded-t-3xl`} />
-
-                                            <div className="flex items-start gap-4 mb-4">
-                                                <div className={`p-4 rounded-2xl bg-black/50 border border-white/10 ${phase.textColor}`}>
-                                                    {phase.icon}
-                                                </div>
-                                                <div className="flex flex-col">
-                                                    <span className={`font-mono text-[9px] md:text-[10px] tracking-widest uppercase ${phase.textColor} opacity-60`}>
-                                                        {phase.badge}
-                                                    </span>
-                                                    <h3 className="font-sans text-xl md:text-2xl font-black text-white uppercase tracking-tight leading-tight mt-1">
-                                                        {phase.title}
-                                                    </h3>
-                                                </div>
-                                            </div>
-
-                                            <p className="font-mono text-xs md:text-sm text-slate-300 leading-relaxed opacity-80">
-                                                {phase.body}
-                                            </p>
+                                {/* Feature Side */}
+                                <div className={`flex flex-row md:flex-col justify-between items-center md:items-start w-full md:w-1/4 pb-3 md:pb-0 border-b md:border-b-0 md:border-r border-white/10 md:pr-4 shrink-0`}>
+                                    <h2 className="font-sans text-4xl sm:text-5xl md:text-6xl font-black text-white mix-blend-overlay leading-none">
+                                        {phase.num}
+                                    </h2>
+                                    <div className="flex items-center md:items-start gap-2 md:gap-0 mt-0 md:mt-2">
+                                        <div className={`hidden md:block text-white ${phase.textColor}`}>
+                                            {phase.icon}
                                         </div>
-
-                                        {/* Connecting Line physically locking the card to the wheel edge */}
-                                        <div className="absolute -bottom-16 md:-bottom-24 left-1/2 w-0.5 h-16 md:h-24 bg-gradient-to-b from-orange-500/50 to-transparent -translate-x-1/2" />
-                                        
+                                        <span className={`font-mono text-[10px] sm:text-xs md:text-[10px] ${phase.textColor} font-bold uppercase tracking-[0.2em] md:mt-1`}>
+                                            {phase.badge}
+                                        </span>
                                     </div>
-
                                 </div>
+
+                                {/* Body Text Side */}
+                                <div className="flex flex-col justify-center w-full md:w-3/4 gap-2 md:gap-3">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <ChevronRight size={14} className={phase.textColor} />
+                                        <span className={`font-mono text-xs sm:text-sm md:text-md font-bold tracking-widest uppercase ${phase.textColor}`}>
+                                            {phase.title}
+                                        </span>
+                                    </div>
+                                    <p className="text-slate-300 font-sans text-xs sm:text-sm md:text-base leading-relaxed">
+                                        &quot;{phase.body}&quot;
+                                    </p>
+                                </div>
+                                
+                                {/* Inner glow line top */}
+                                <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${phase.accent}`} />
                             </div>
                         ))}
                     </div>
-                </div>
 
+                    {/* 4. Global Indicators (Progress Bar) */}
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[90vw] md:w-[80vw] max-w-4xl h-0.5 bg-white/10 z-30 overflow-hidden rounded-full">
+                        <div 
+                            ref={progressRef} 
+                            className="absolute inset-y-0 left-0 bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 origin-left"
+                            style={{ transform: 'scaleX(0)' }}
+                        />
+                    </div>
+                    
+                    </div>
+                    
+                </div>
             </div>
-        </div>
+        </section>
     );
 }
