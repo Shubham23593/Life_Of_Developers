@@ -15,7 +15,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 
 const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-mono',
+  variable: '--font-sans',
   weight: ['300', '400', '500', '700', '900'],
   display: 'swap',
 });
@@ -38,7 +38,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrains.variable}`}>
-      <body className="bg-black text-green-400 font-mono selection:bg-green-500 selection:text-black antialiased overflow-x-hidden">
+      <body className="bg-slate-950 text-slate-200 font-sans selection:bg-orange-500 selection:text-black antialiased overflow-x-hidden">
         {children}
       </body>
     </html>

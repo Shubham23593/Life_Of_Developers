@@ -36,7 +36,7 @@ export default function HeroScene({ scrollProgress }) {
       <pointLight
         position={[0, 3, 0]}
         intensity={0.6}
-        color="#22c55e"
+        color="#f97316"
         distance={8}
         decay={2}
       />
@@ -45,7 +45,7 @@ export default function HeroScene({ scrollProgress }) {
       <pointLight
         position={[-4, 2, -3]}
         intensity={0.4}
-        color="#16a34a"
+        color="#ea580c"
         distance={10}
         decay={2}
       />
@@ -54,7 +54,7 @@ export default function HeroScene({ scrollProgress }) {
       <pointLight
         position={[2, 0.5, 1]}
         intensity={0.4} // Slightly boosted intensity to balance the dark room
-        color="#22c55e"
+        color="#f97316"
         distance={4}
         decay={2}
       />

@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from 'react';
 import { useScroll, useTransform, useMotionValue, useSpring, motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useHeroStore } from '@/store/heroStore';
+import { TechCard, GridScanner } from '@/components/SciFiUI';
 
 /* Lazy-load canvas to avoid SSR issues */
 const HeroScene = dynamic(() => import('@/components/canvas/HeroScene'), {
@@ -77,38 +78,28 @@ function PhasePanel({ phase, scrollYProgress }) {
       {/* Phase badge */}
       <div className="flex items-center gap-2">
         <span
-          className="text-[10px] md:text-xs tracking-[0.3em] text-green-400 uppercase"
+          className="text-[10px] md:text-xs tracking-[0.3em] text-orange-400 uppercase"
           style={{ fontFamily: "var(--font-mono)" }}
         >
           {phase.id} // {phase.tag}
         </span>
-        <div className="h-px w-8 bg-green-400/60" />
+        <div className="h-px w-8 bg-orange-400/60" />
       </div>
 
-      {/* Glass card - Deep black with purple border */}
-      <div
-        className="rounded-xl px-5 py-4 md:px-6 md:py-5"
-        style={{
-          background: 'rgba(0, 0, 0, 0.65)',
-          border: '1px solid rgba(22,163,74, 0.3)', // Purple edge
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          boxShadow: '0 0 30px rgba(34,197,94, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
-        }}
-      >
+      <TechCard className="max-w-sm" delay={0.1}>
         <h3
-          className="text-green-500 text-lg md:text-2xl font-bold leading-tight mb-2"
-          style={{ fontFamily: "var(--font-mono)" }}
+          className="text-slate-200 text-lg md:text-2xl font-bold leading-tight mb-2"
+          style={{ fontFamily: "var(--font-sans)" }}
         >
           {phase.sub}
         </h3>
         <p
-          className="text-green-400/70 text-xs md:text-sm tracking-wide leading-relaxed"
+          className="text-orange-400/70 text-xs md:text-sm tracking-wide leading-relaxed"
           style={{ fontFamily: "var(--font-mono)" }}
         >
           {phase.body}
         </p>
-      </div>
+      </TechCard>
     </motion.div>
   );
 }
@@ -122,8 +113,8 @@ function ScrollBar({ scrollYProgress, overlayOpacity }) {
       style={{
         scaleX,
         opacity: overlayOpacity,
-        background: 'linear-gradient(90deg, #22c55e, #16a34a, #22c55e)',
-        boxShadow: '0 0 15px rgba(22,163,74, 0.8)',
+        background: 'linear-gradient(90deg, #f97316, #ea580c, #fdba74)',
+        boxShadow: '0 0 15px rgba(234,88,12, 0.8)',
       }}
     />
   );
@@ -145,12 +136,12 @@ function CornerHUD({ scrollYProgress, overlayOpacity }) {
       className="fixed top-6 right-6 z-50 flex flex-col items-end gap-1 select-none pointer-events-none"
       style={{ fontFamily: "var(--font-mono)", opacity: overlayOpacity }}
     >
-      <span className="text-[10px] text-green-500/70 tracking-widest uppercase">
+      <span className="text-[10px] text-orange-500/70 tracking-widest uppercase">
         Developer-Life
       </span>
-      <span className="text-xs text-green-500/40">{String(pct).padStart(3, '0')}%</span>
-      <div className="h-px w-10 bg-green-500/30" />
-      <span className="text-[9px] text-green-400/50 tracking-[0.2em] uppercase">
+      <span className="text-xs text-slate-200/40">{String(pct).padStart(3, '0')}%</span>
+      <div className="h-px w-10 bg-orange-500/30" />
+      <span className="text-[9px] text-orange-400/50 tracking-[0.2em] uppercase">
         {activePhase.id} // {activePhase.tag}
       </span>
     </motion.div>
@@ -166,13 +157,13 @@ function ScrollHint({ scrollYProgress }) {
       className="fixed bottom-10 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 pointer-events-none"
     >
       <span
-        className="text-[10px] text-green-500/40 tracking-[0.3em] uppercase"
+        className="text-[10px] text-slate-200/40 tracking-[0.3em] uppercase"
         style={{ fontFamily: "var(--font-mono)" }}
       >
         Scroll to explore
       </span>
       <motion.div
-        className="w-px h-8 bg-gradient-to-b from-green-400/60 to-transparent"
+        className="w-px h-8 bg-gradient-to-b from-orange-400/60 to-transparent"
         animate={{ scaleY: [1, 0.3, 1], opacity: [0.6, 0.2, 0.6] }}
         transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -212,7 +203,7 @@ export default function Hero() {
   return (
     <>
       {/* 400vh scroll driver */}
-      <div ref={containerRef} className="relative h-[400vh] bg-black">
+      <div ref={containerRef} className="relative h-[400vh] bg-slate-950">
 
         {/* ── Pinned 3D canvas (full viewport) ── */}
         <motion.div
@@ -228,9 +219,11 @@ export default function Hero() {
             className="absolute inset-0 pointer-events-none"
             style={{
               background:
-                'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 30%, rgba(0,0,0,0.85) 100%)',
+                'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 30%, rgba(2,6,23,0.85) 100%)',
             }}
           />
+
+          <GridScanner />
 
           {/* Phase text panels */}
           <motion.div className="absolute inset-0 pointer-events-none" style={{ opacity: overlayOpacity }}>
@@ -252,30 +245,30 @@ export default function Hero() {
             }}
           >
             <h1
-              className="text-5xl md:text-8xl lg:text-[9rem] font-bold text-green-500 leading-none tracking-tighter"
+              className="text-5xl md:text-8xl lg:text-[9rem] font-black text-slate-200 leading-none tracking-tighter"
               style={{ fontFamily: "var(--font-display)", transform: "scaleX(1.3)" }}
             >
               Developer
             </h1>
             <h1
-              className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter -mt-2 md:-mt-6"
+              className="text-6xl md:text-8xl lg:text-[10rem] font-black tracking-tighter -mt-2 md:-mt-6"
               style={{
-                fontFamily: "var(--font-mono)",
+                fontFamily: "var(--font-sans)",
                 transform: "scaleX(1.3)",
-                backgroundImage: 'linear-gradient(to right, #22c55e, #16a34a, #15803d)',
+                backgroundImage: 'linear-gradient(to right, #f97316, #ea580c, #fdba74)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                filter: 'drop-shadow(0 10px 30px rgba(22,163,74, 0.3))'
+                filter: 'drop-shadow(0 10px 30px rgba(234,88,12, 0.3))'
               }}
             >
               Life
             </h1>
             
             <p
-              className="mt-8 md:mt-12 flex items-center gap-2 md:gap-3 text-green-500/40 text-[9px] md:text-xs tracking-[0.4em] uppercase"
+              className="mt-8 md:mt-12 flex items-center gap-2 md:gap-3 text-slate-200/40 text-[9px] md:text-xs tracking-[0.4em] uppercase"
               style={{ fontFamily: "var(--font-mono)" }}
             >
-              The Architect <span className="text-green-500">•</span> The Grind <span className="text-[#22c55e]">•</span> The Persistence
+              The Architect <span className="text-orange-500">•</span> The Grind <span className="text-[#fdba74]">•</span> The Persistence
             </p>
           </motion.div>
 

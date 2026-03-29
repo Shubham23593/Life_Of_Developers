@@ -83,27 +83,27 @@ function NarrativePanel({ phase, scrollYProgress }) {
                 <span style={{
                     fontFamily: 'var(--font-mono)',
                     fontSize: '10px',
-                    color: '#22c55e', // Cyan
+                    color: '#f97316', // Cyan
                     letterSpacing: '0.28em',
                     textTransform: 'uppercase',
                 }}>
                     {phase.badge}
                 </span>
-                <div style={{ height: '1px', width: '28px', background: 'rgba(34,197,94,0.45)' }} />
+                <div style={{ height: '1px', width: '28px', background: 'rgba(249,115,22,0.45)' }} />
             </div>
 
             <div style={{
                 background: 'rgba(0,0,0,0.6)',
-                border: '1px solid rgba(22,163,74,0.3)', // Deep Purple border
+                border: '1px solid rgba(234,88,12,0.3)', // Deep Purple border
                 borderRadius: '10px',
                 padding: '14px 18px',
                 backdropFilter: 'blur(14px)',
-                boxShadow: '0 0 30px rgba(34,197,94,0.05), inset 0 1px 0 rgba(34,197,94,0.05)',
+                boxShadow: '0 0 30px rgba(249,115,22,0.05), inset 0 1px 0 rgba(249,115,22,0.05)',
             }}>
                 <h3 style={{
-                    fontFamily: "var(--font-mono)",
+                    fontFamily: "var(--font-sans)",
                     fontSize: '1.35rem',
-                    color: '#22c55e',
+                    color: '#f97316',
                     fontWeight: 800,
                     margin: '0 0 6px',
                     lineHeight: 1.25,
@@ -114,7 +114,7 @@ function NarrativePanel({ phase, scrollYProgress }) {
                 <p style={{
                     fontFamily: 'var(--font-mono)',
                     fontSize: '11px',
-                    color: 'rgba(34,197,94,0.7)', // Cyan text
+                    color: 'rgba(249,115,22,0.7)', // Cyan text
                     margin: 0,
                     lineHeight: 1.6,
                     letterSpacing: '0.02em',
@@ -136,8 +136,8 @@ function GradientScrollBar({ scrollYProgress }) {
             className="fixed bottom-0 left-0 h-[2px] w-full origin-left z-50"
             style={{
                 scaleX,
-                background: 'linear-gradient(90deg, #22c55e, #16a34a, #22c55e)',
-                boxShadow: '0 0 15px rgba(22,163,74,0.8)',
+                background: 'linear-gradient(90deg, #f97316, #ea580c, #f97316)',
+                boxShadow: '0 0 15px rgba(234,88,12,0.8)',
             }}
         />
     );
@@ -158,14 +158,14 @@ function CornerHUD({ scrollYProgress }) {
             style={{ opacity: op }}
             className="fixed top-6 right-6 z-50 flex flex-col items-end gap-1 select-none pointer-events-none"
         >
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(34,197,94,0.55)', letterSpacing: '0.3em', textTransform: 'uppercase' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(249,115,22,0.55)', letterSpacing: '0.3em', textTransform: 'uppercase' }}>
                 Chapter-04
             </span>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'rgba(34,197,94,0.4)' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'rgba(249,115,22,0.4)' }}>
                 {String(pct).padStart(3, '0')}%
             </span>
-            <div style={{ height: '1px', width: '36px', background: 'rgba(34,197,94,0.3)' }} />
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(34,197,94,0.5)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+            <div style={{ height: '1px', width: '36px', background: 'rgba(249,115,22,0.3)' }} />
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(249,115,22,0.5)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
                 {label}
             </span>
         </motion.div>
@@ -185,16 +185,16 @@ function EntryBadge({ scrollYProgress }) {
             style={{ opacity, y }}
             className="absolute top-[10%] left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-3 pointer-events-none w-full px-6"
         >
-            <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: '9px', color: 'rgba(34,197,94,0.5)', letterSpacing: '0.5em', textTransform: 'uppercase' }}>
+            <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: '9px', color: 'rgba(249,115,22,0.5)', letterSpacing: '0.5em', textTransform: 'uppercase' }}>
                 [ Chapter 04 ]
             </span>
-            <h2 style={{ fontFamily: "var(--font-mono)", fontSize: 'clamp(2.2rem,5.5vw,4.5rem)', fontWeight: 900, color: '#22c55e', textAlign: 'center', lineHeight: 1, margin: 0 }}>
+            <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 'clamp(2.2rem,5.5vw,4.5rem)', fontWeight: 900, color: '#f97316', textAlign: 'center', lineHeight: 1, margin: 0 }}>
                 The Continuous{' '}
-                <span style={{ background: 'linear-gradient(135deg,#22c55e,#16a34a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 0 14px rgba(34,197,94,0.5))' }}>
+                <span style={{ background: 'linear-gradient(135deg, #f97316, #ea580c, #fdba74)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 0 14px rgba(249,115,22,0.5))' }}>
                     Journey
                 </span>
             </h2>
-            <p style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: '11px', color: 'rgba(34,197,94,0.28)', letterSpacing: '0.22em', textTransform: 'uppercase', textAlign: 'center', margin: 0 }}>
+            <p style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: '11px', color: 'rgba(249,115,22,0.28)', letterSpacing: '0.22em', textTransform: 'uppercase', textAlign: 'center', margin: 0 }}>
                 Growth takes time · Continuous Learning
             </p>
         </motion.div>

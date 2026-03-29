@@ -81,7 +81,7 @@ export default function DebuggingDescent() {
     }, []);
 
     return (
-        <div ref={wrapperRef} className="relative w-full bg-black">
+        <div ref={wrapperRef} className="relative w-full bg-slate-950">
             <section
                 ref={containerRef}
                 className="relative h-screen w-full overflow-hidden flex items-center"
@@ -90,14 +90,14 @@ export default function DebuggingDescent() {
 
                 <div className="absolute top-8 left-8 md:top-12 md:left-12 z-50 pointer-events-none">
                     <div className="flex items-center gap-3">
-                        <span className="text-[10px] md:text-xs font-mono tracking-[0.4em] text-green-400 uppercase">
+                        <span className="text-[10px] md:text-xs font-mono tracking-[0.4em] text-slate-200/80 uppercase">
                             PHASE // 02
                         </span>
-                        <div className="h-px w-10 bg-gradient-to-r from-green-500/50 to-transparent" />
+                        <div className="h-px w-10 bg-gradient-to-r from-orange-400/50 to-transparent" />
                     </div>
                     <h2
-                        className="text-3xl md:text-5xl lg:text-6xl font-bold text-green-500/95 tracking-tighter mt-3"
-                        style={{ fontFamily: "var(--font-mono)" }}
+                        className="text-3xl md:text-5xl lg:text-6xl font-bold text-orange-400/95 tracking-tighter mt-3"
+                        style={{ fontFamily: "var(--font-sans)" }}
                     >
                         THE STRUGGLE
                     </h2>
@@ -145,18 +145,18 @@ export default function DebuggingDescent() {
                                     className="absolute inset-0 flex flex-col justify-center p-8 rounded-2xl shadow-2xl origin-top will-change-transform"
                                     style={{
                                         backgroundColor: '#090D1A',
-                                        border: '1px solid rgba(34,197,94, 0.2)',
+                                        border: '1px solid rgba(249,115,22, 0.2)',
                                         boxShadow: '0 -20px 40px -10px rgba(0,0,0,0.8)',
                                         zIndex: index,
                                     }}
                                 >
                                     <div className="flex items-center gap-4 mb-6">
-                                        <div className="w-10 h-10 rounded-lg bg-cyan-950 flex items-center justify-center border border-green-500/50 text-green-400 font-mono text-sm">
+                                        <div className="w-10 h-10 rounded-lg bg-cyan-950 flex items-center justify-center border border-orange-400/50 text-slate-200/80 font-mono text-sm">
                                             0{card.id}
                                         </div>
                                         <h3
-                                            className="text-green-500 text-xl md:text-2xl font-bold tracking-tight"
-                                            style={{ fontFamily: "var(--font-mono)" }}
+                                            className="text-orange-400 text-xl md:text-2xl font-bold tracking-tight"
+                                            style={{ fontFamily: "var(--font-sans)" }}
                                         >
                                             {card.title}
                                         </h3>

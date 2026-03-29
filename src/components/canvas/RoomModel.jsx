@@ -117,7 +117,7 @@ function Laptop({ screenGlow, lidAngle }) {
             <boxGeometry args={[1.1, 0.002, 0.68]} />
             <meshStandardMaterial
               color="#001122"
-              emissive="#22c55e"
+              emissive="#f97316"
               emissiveIntensity={0}
               roughness={0.8}
               metalness={0.1}
@@ -128,7 +128,7 @@ function Laptop({ screenGlow, lidAngle }) {
           <pointLight
             ref={glowRef}
             position={[0, -0.1, 0]}
-            color="#22c55e"
+            color="#f97316"
             intensity={0}
             distance={5}
             decay={2}
@@ -139,7 +139,7 @@ function Laptop({ screenGlow, lidAngle }) {
             <Text
               position={[0, 0, 0]}
               fontSize={0.05}
-              color="#22c55e"
+              color="#f97316"
               anchorX="center"
               anchorY="middle"
               maxWidth={1.0}
@@ -180,7 +180,7 @@ function CoffeeMug() {
         {[0, 0.08, -0.06].map((x, i) => (
           <mesh key={i} position={[x, i * 0.06, 0]}>
             <sphereGeometry args={[0.015 + i * 0.005, 6, 6]} />
-            <meshStandardMaterial color="#22c55e" transparent opacity={0.15 - i * 0.04} />
+            <meshStandardMaterial color="#f97316" transparent opacity={0.15 - i * 0.04} />
           </mesh>
         ))}
       </group>
@@ -207,8 +207,8 @@ function BugOrbit({ count = 5, visible }) {
           <mesh key={i} position={[Math.cos(angle) * r, 0, Math.sin(angle) * r]}>
             <octahedronGeometry args={[0.045, 0]} />
             <meshStandardMaterial
-              color="#22c55e"
-              emissive="#22c55e"
+              color="#f97316"
+              emissive="#f97316"
               emissiveIntensity={1.5}
               roughness={0.2}
             />
@@ -233,7 +233,7 @@ function DigitalGrid({ opacity }) {
       <planeGeometry args={[20, 20, 20, 20]} />
       <meshStandardMaterial
         color="#10002b"
-        emissive="#16a34a"
+        emissive="#ea580c"
         emissiveIntensity={0.8}
         wireframe
         transparent
@@ -313,7 +313,7 @@ export default function RoomModel({ scrollProgress, isMobile }) {
         <planeGeometry args={[8, 3]} />
         <meshStandardMaterial
           color="#000000"
-          emissive="#22c55e"
+          emissive="#f97316"
           emissiveIntensity={0.12}
           roughness={1}
         />
@@ -329,8 +329,8 @@ export default function RoomModel({ scrollProgress, isMobile }) {
       <mesh position={[0, 0.73, 0.91]}>
         <boxGeometry args={[3.8, 0.008, 0.006]} />
         <meshStandardMaterial
-          color="#22c55e"
-          emissive="#22c55e"
+          color="#f97316"
+          emissive="#f97316"
           emissiveIntensity={4}
         />
       </mesh>

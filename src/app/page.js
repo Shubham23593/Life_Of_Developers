@@ -31,7 +31,7 @@ const Hero = dynamic(() => import('@/components/sections/Hero'), {
 
 const Chapter03 = dynamic(() => import('@/components/sections/Chapter03'), {
   ssr: false,
-  loading: () => <div className="h-screen bg-black" />,
+  loading: () => <div className="h-screen bg-slate-950" />,
 });
 
 const FinalCallToAction = dynamic(() => import('@/components/sections/FinalCallToAction'), {

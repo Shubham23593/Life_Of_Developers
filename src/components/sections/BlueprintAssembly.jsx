@@ -68,13 +68,13 @@ export default function BlueprintAssembly() {
     }, []);
 
     return (
-        <div ref={wrapperRef} className="relative w-full bg-black overflow-hidden">
-            <section ref={containerRef} className="relative h-screen w-full flex flex-col md:flex-row bg-black">
+        <div ref={wrapperRef} className="relative w-full bg-slate-950 overflow-hidden">
+            <section ref={containerRef} className="relative h-screen w-full flex flex-col md:flex-row bg-slate-950">
 
                 {/* --- 1. BACKGROUND LAYER --- */}
                 <div className="absolute inset-0 pointer-events-none opacity-[0.10]"
                     style={{
-                        backgroundImage: `linear-gradient(rgba(34,197,94, 0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94, 0.4) 1px, transparent 1px)`,
+                        backgroundImage: `linear-gradient(rgba(249,115,22, 0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(249,115,22, 0.4) 1px, transparent 1px)`,
                         backgroundSize: '40px 40px'
                     }}
                 />
@@ -83,14 +83,14 @@ export default function BlueprintAssembly() {
                 {/* --- 2. TITLE (Top Left) --- */}
                 <div className="absolute top-8 left-6 md:top-12 md:left-12 z-50 pointer-events-none">
                     <div className="flex items-center gap-3">
-                        <span className="text-[10px] md:text-xs tracking-[0.4em] text-green-500 uppercase font-mono">
+                        <span className="text-[10px] md:text-xs tracking-[0.4em] text-orange-400 uppercase font-mono">
                             PHASE // 03
                         </span>
-                        <div className="h-px w-10 bg-gradient-to-r from-green-500 to-transparent" />
+                        <div className="h-px w-10 bg-gradient-to-r from-orange-400 to-transparent" />
                     </div>
                     <h2
-                        className="text-3xl md:text-5xl lg:text-6xl font-bold text-green-500/95 tracking-tighter mt-3"
-                        style={{ fontFamily: "var(--font-mono)" }}
+                        className="text-3xl md:text-5xl lg:text-6xl font-bold text-orange-400/95 tracking-tighter mt-3"
+                        style={{ fontFamily: "var(--font-sans)" }}
                     >
                         LEARNING & GROWTH
                     </h2>
@@ -101,7 +101,7 @@ export default function BlueprintAssembly() {
                     
                     {/* Text Narrative */}
                     <div ref={narrativeRef} className="max-w-md relative z-40 will-change-transform">
-                        <p className="text-green-600 font-mono text-sm md:text-base leading-relaxed border-l-2 border-green-500/50 pl-6 bg-green-500/5 py-4 rounded-r-lg backdrop-blur-sm">
+                        <p className="text-slate-400 font-mono text-sm md:text-base leading-relaxed border-l-2 border-orange-400/50 pl-6 bg-orange-500/5 py-4 rounded-r-lg backdrop-blur-sm">
                             I started understanding… Building… breaking… learning… My ideas turned into real projects. From simple pages to complex applications.
                         </p>
                     </div>
@@ -111,12 +111,12 @@ export default function BlueprintAssembly() {
                         <img
                             src="/standing-dev.png"
                             alt="Standing Developer"
-                            className="w-full h-auto object-contain drop-shadow-[0_-10px_30px_rgba(34,197,94,0.15)]"
+                            className="w-full h-auto object-contain drop-shadow-[0_-10px_30px_rgba(249,115,22,0.15)]"
                             onError={(e) => e.target.style.display = 'none'}
                         />
                         {/* Hover Pad (Cyan/Orange Energy Disc) */}
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[80%] h-4 bg-green-500/20 blur-xl rounded-full" />
-                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[60%] h-[2px] bg-gradient-to-r from-transparent via-green-400 to-transparent blur-sm rounded-full" />
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[80%] h-4 bg-orange-500/20 blur-xl rounded-full" />
+                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[60%] h-[2px] bg-gradient-to-r from-transparent via-orange-300 to-transparent blur-sm rounded-full" />
                     </div>
                 </div>
 
@@ -135,13 +135,13 @@ export default function BlueprintAssembly() {
                         {MODULES.map((mod, i) => (
                             <div key={mod.id} 
                                  ref={el => modulesRef.current[i] = el}
-                                 className={`absolute z-10 w-24 h-24 bg-black border border-green-500/30 rounded-xl flex flex-col items-center justify-center p-2 shadow-[0_0_15px_rgba(34,197,94,0.1)] overflow-hidden will-change-transform ${mod.posClasses}`}
+                                 className={`absolute z-10 w-24 h-24 bg-slate-950 border border-[#ea580c]/30 rounded-xl flex flex-col items-center justify-center p-2 shadow-[0_0_15px_rgba(249,115,22,0.1)] overflow-hidden will-change-transform ${mod.posClasses}`}
                             >
-                                <div className="text-green-500 mb-1 opacity-80">{mod.icon}</div>
-                                <span className="font-mono text-green-300 text-[10px] font-bold text-center leading-tight tracking-wider">{mod.label}</span>
+                                <div className="text-orange-400 mb-1 opacity-80">{mod.icon}</div>
+                                <span className="font-mono text-orange-200 text-[10px] font-bold text-center leading-tight tracking-wider">{mod.label}</span>
                                 
                                 {/* Top highlight */}
-                                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-green-400/50 to-transparent" />
+                                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-orange-300/50 to-transparent" />
                             </div>
                         ))}
 
